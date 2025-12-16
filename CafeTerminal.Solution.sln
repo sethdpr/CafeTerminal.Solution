@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35514.174 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CafeTerminal.Maui", "CafeTerminal.Maui\CafeTerminal.Maui.csproj", "{ADEB7D8B-6163-46C2-8243-CA0E30D6F5C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CafeTerminal.Api", "CafeTerminal.Api\CafeTerminal.Api.csproj", "{2C314E1D-0256-4A68-A4B5-6F2F2D850893}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{ADEB7D8B-6163-46C2-8243-CA0E30D6F5C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADEB7D8B-6163-46C2-8243-CA0E30D6F5C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADEB7D8B-6163-46C2-8243-CA0E30D6F5C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C314E1D-0256-4A68-A4B5-6F2F2D850893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C314E1D-0256-4A68-A4B5-6F2F2D850893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C314E1D-0256-4A68-A4B5-6F2F2D850893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C314E1D-0256-4A68-A4B5-6F2F2D850893}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
