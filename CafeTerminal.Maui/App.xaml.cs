@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Controls;
+using CafeTerminal.Maui.Views;
 
 namespace CafeTerminal.Maui
 {

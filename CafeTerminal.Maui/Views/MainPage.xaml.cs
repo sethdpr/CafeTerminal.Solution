@@ -1,7 +1,7 @@
 using CafeTerminal.Maui.ViewModels;
 using Microsoft.Maui.Controls;
 
-namespace CafeTerminal.Maui;
+namespace CafeTerminal.Maui.Views;
 
 public partial class MainPage : ContentPage
 {

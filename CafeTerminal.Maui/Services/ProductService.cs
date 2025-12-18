@@ -1,35 +1,32 @@
 ﻿using CafeTerminal.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CafeTerminal.Maui.Services
+namespace CafeTerminal.Maui.Services;
+
+public class ProductService
 {
-    public class ProductService
+    private readonly HttpClient _http;
+
+    public ProductService(HttpClient http)
     {
-        private readonly HttpClient _http;
+        _http = http;
+    }
 
-        public ProductService(HttpClient http)
-        {
-            _http = http;
-        }
+    public async Task<List<Product>> GetProductsAsync()
+        => await _http.GetFromJsonAsync<List<Product>>("api/products") ?? new List<Product>();
 
-        public async Task<List<Product>> GetProductsAsync()
-            => await _http.GetFromJsonAsync<List<Product>>("api/products") ?? new List<Product>();
+    public async Task<Product?> CreateProductAsync(Product product)
+    {
+        var response = await _http.PostAsJsonAsync("api/products", product);
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<Product>();
+        return null;
+    }
 
-        public async Task<Product?> CreateProductAsync(Product product)
-            => await _http.PostAsJsonAsync("api/products", product)
-                         .ContinueWith(t => t.Result.IsSuccessStatusCode
-                         ? t.Result.Content.ReadFromJsonAsync<Product>().Result
-                         : null);
-
-        public async Task<bool> UpdateProductAsync(Product product)
-            => (await _http.PutAsJsonAsync($"api/products/{product.Id}", product)).IsSuccessStatusCode;
-
-        public async Task<bool> DeleteProductAsync(int id)
-            => (await _http.DeleteAsync($"api/products/{id}")).IsSuccessStatusCode;
+    public async Task<bool> DeleteProductAsync(int id)
+    {
+        var response = await _http.DeleteAsync($"api/products/{id}");
+        return response.IsSuccessStatusCode;
     }
 }
