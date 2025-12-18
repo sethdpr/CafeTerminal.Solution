@@ -1,0 +1,70 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeTerminal.Maui.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Products Section -->
+            <Label Text="Products" FontSize="24" />
+            <Entry Placeholder="Product Name" Text="{Binding NewProductName}" />
+            <Entry Placeholder="Price" Keyboard="Numeric" Text="{Binding NewProductPrice}" />
+            <Button Text="Add Product" Command="{Binding AddProductCommand}" />
+
+            <CollectionView ItemsSource="{Binding Products}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="{Binding Name}" />
+                            <Label Text="{Binding Price}" />
+                            <Button Text="Delete"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteProductCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Tables Section -->
+            <Label Text="Tables" FontSize="24" />
+            <Entry Placeholder="Table Name" Text="{Binding NewTableName}" />
+            <Entry Placeholder="Number" Keyboard="Numeric" Text="{Binding NewTableNumber}" />
+            <Button Text="Add Table" Command="{Binding AddTableCommand}" />
+
+            <CollectionView ItemsSource="{Binding Tables}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="{Binding Name}" />
+                            <Label Text="{Binding Number}" />
+                            <Button Text="Delete"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTableCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Orders Section -->
+            <Label Text="Orders" FontSize="24" />
+            <Picker Title="Select Table"
+                    ItemsSource="{Binding Tables}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedTable}" />
+            <Button Text="Add Order" Command="{Binding AddOrderCommand}" />
+
+            <CollectionView ItemsSource="{Binding Orders}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="{Binding TableId, StringFormat='Table ID: {0}'}" />
+                            <Label Text="{Binding CreatedAt, StringFormat='Created: {0}'}" />
+                            <Label Text="{Binding IsClosed, StringFormat='Closed: {0}'}" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

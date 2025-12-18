@@ -1,15 +1,18 @@
-﻿namespace CafeTerminal.Maui
+﻿using Microsoft.Maui.Controls;
+
+namespace CafeTerminal.Maui
 {
     public partial class App : Application
     {
-        public App()
+        public App(MainPage mainPage)
         {
             InitializeComponent();
+            MainPage = mainPage;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            return new Window(MainPage);
         }
     }
 }
