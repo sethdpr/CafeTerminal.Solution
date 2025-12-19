@@ -1,5 +1,5 @@
-﻿using CafeTerminal.Shared.Models;
-using Microsoft.AspNetCore.Http;
+﻿using CafeTerminal.Api.Services;
+using CafeTerminal.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeTerminal.Api.Controllers
@@ -8,46 +8,59 @@ namespace CafeTerminal.Api.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private static readonly List<Order> _orders = new();
+        private readonly OrderService _service;
 
-        [HttpGet]
-        public IActionResult GetAll([FromQuery] int? tableNumber)
+        public OrdersController(OrderService service)
         {
-            if (tableNumber == null)
-                return Ok(_orders);
-
-            return Ok(_orders.Where(o => o.TableId == tableNumber));
+            _service = service;
         }
 
-        [HttpPost]
-        public IActionResult Create(Order order)
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] int? tableNumber)
         {
-            order.Id = _orders.Count + 1;
-            order.CreatedAt = DateTime.UtcNow;
-            _orders.Add(order);
+            if (tableNumber.HasValue)
+            {
+                var ordersByTable = await _service.GetByTableIdAsync(tableNumber.Value);
+                return Ok(ordersByTable);
+            }
+
+            var allOrders = await _service.GetAllAsync();
+            return Ok(allOrders);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var order = await _service.GetByIdAsync(id);
+            if (order == null) return NotFound();
             return Ok(order);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, Order order)
+        [HttpPost]
+        public async Task<IActionResult> Create(Order order)
         {
-            var existing = _orders.FirstOrDefault(o => o.Id == id);
-            if (existing == null) return NotFound();
+            order.CreatedAt = DateTime.UtcNow;
+            var created = await _service.CreateAsync(order);
+            return Ok(created);
+        }
 
-            existing.TableId = order.TableId;
-            existing.OrderLines = order.OrderLines;
-            existing.IsClosed = order.IsClosed;
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, Order order)
+        {
+            if (id != order.Id) return BadRequest();
 
-            return Ok(existing);
+            var updated = await _service.UpdateAsync(id, order);
+            if (updated == null) return NotFound();
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var order = _orders.FirstOrDefault(o => o.Id == id);
-            if (order == null) return NotFound();
+            var success = await _service.DeleteAsync(id);
+            if (!success) return NotFound();
 
-            _orders.Remove(order);
             return NoContent();
         }
     }

@@ -1,5 +1,5 @@
-﻿using CafeTerminal.Shared.Models;
-using Microsoft.AspNetCore.Http;
+﻿using CafeTerminal.Api.Services;
+using CafeTerminal.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeTerminal.Api.Controllers
@@ -8,38 +8,53 @@ namespace CafeTerminal.Api.Controllers
     [ApiController]
     public class TablesController : ControllerBase
     {
-        private static readonly List<Table> _tables = new();
+        private readonly TableService _service;
+
+        public TablesController(TableService service)
+        {
+            _service = service;
+        }
 
         [HttpGet]
-        public IActionResult GetAll() => Ok(_tables);
+        public async Task<IActionResult> GetAll()
+        {
+            var tables = await _service.GetAllAsync();
+            return Ok(tables);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var table = await _service.GetAllAsync(); // optioneel: voeg GetByIdAsync toe in service
+            var t = table.FirstOrDefault(x => x.Id == id);
+            if (t == null) return NotFound();
+            return Ok(t);
+        }
 
         [HttpPost]
-        public IActionResult Create(Table table)
+        public async Task<IActionResult> Create(Table table)
         {
-            table.Id = _tables.Count + 1;
-            _tables.Add(table);
-            return Ok(table);
+            var created = await _service.CreateAsync(table);
+            return Ok(created);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Table table)
+        public async Task<IActionResult> Update(int id, Table table)
         {
-            var existing = _tables.FirstOrDefault(t => t.Id == id);
-            if (existing == null) return NotFound();
+            if (id != table.Id) return BadRequest();
 
-            existing.Name = table.Name;
-            existing.Number = table.Number;
+            var updated = await _service.UpdateAsync(id, table);
+            if (updated == null) return NotFound();
 
-            return Ok(existing);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var table = _tables.FirstOrDefault(t => t.Id == id);
-            if (table == null) return NotFound();
+            var success = await _service.DeleteAsync(id);
+            if (!success) return NotFound();
 
-            _tables.Remove(table);
             return NoContent();
         }
     }

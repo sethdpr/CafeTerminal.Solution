@@ -1,5 +1,5 @@
-﻿using CafeTerminal.Shared.Models;
-using Microsoft.AspNetCore.Http;
+﻿using CafeTerminal.Api.Services;
+using CafeTerminal.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CafeTerminal.Api.Controllers
@@ -8,48 +8,59 @@ namespace CafeTerminal.Api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private static readonly List<Product> _products = new();
+        private readonly ProductService _service;
 
+        public ProductsController(ProductService service)
+        {
+            _service = service;
+        }
+
+        // GET: api/products
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_products);
+            var products = await _service.GetAllAsync();
+            return Ok(products);
         }
 
+        // GET: api/products/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
-            return product == null ? NotFound() : Ok(product);
-        }
-
-        [HttpPost]
-        public IActionResult Create(Product product)
-        {
-            product.Id = _products.Count + 1;
-            _products.Add(product);
+            var product = await _service.GetByIdAsync(id);
+            if (product == null) return NotFound();
             return Ok(product);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, Product product)
+        // POST: api/products
+        [HttpPost]
+        public async Task<IActionResult> Create(Product product)
         {
-            var existing = _products.FirstOrDefault(p => p.Id == id);
-            if (existing == null) return NotFound();
-
-            existing.Name = product.Name;
-            existing.Price = product.Price;
-
-            return Ok(existing);
+            var created = await _service.CreateAsync(product);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        // PUT: api/products/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, Product product)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
+            if (id != product.Id)
+                return BadRequest();
 
-            _products.Remove(product);
+            var updated = await _service.UpdateAsync(product);
+            if (updated == null)
+                return NotFound();
+
+            return NoContent();
+        }
+
+        // DELETE: api/products/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _service.DeleteAsync(id);
+            if (!success) return NotFound();
+
             return NoContent();
         }
     }
