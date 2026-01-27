@@ -1,0 +1,30 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeTerminal.Maui.Views.RegisterPage">
+
+    <VerticalStackLayout Padding="30" Spacing="15">
+
+        <Label Text="Registreren"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <Entry Placeholder="Email"
+               Keyboard="Email"
+               Text="{Binding Email}" />
+
+        <Entry Placeholder="Username"
+               Text="{Binding Username}" />
+
+        <Entry Placeholder="Wachtwoord"
+               IsPassword="True"
+               Text="{Binding Password}" />
+
+        <Label Text="{Binding Message}"
+               FontSize="12"
+               TextColor="Green" />
+
+        <Button Text="Registreer"
+                Command="{Binding RegisterCommand}"/>
+
+    </VerticalStackLayout>
+</ContentPage>

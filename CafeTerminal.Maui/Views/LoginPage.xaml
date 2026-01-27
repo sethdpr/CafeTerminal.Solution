@@ -1,0 +1,31 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeTerminal.Maui.Views.LoginPage">
+
+    <VerticalStackLayout Padding="30" Spacing="15">
+
+        <Label Text="Login"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <Entry Placeholder="Email"
+               Keyboard="Email"
+               Text="{Binding Email}" />
+
+        <Entry Placeholder="Wachtwoord"
+               IsPassword="True"
+               Text="{Binding Password}" />
+
+        <Label Text="{Binding ErrorMessage}"
+               TextColor="Red"
+               FontSize="12" />
+
+        <Button Text="Login"
+                Command="{Binding LoginCommand}" />
+
+        <Button Text="Nog geen account? Registreer"
+                Clicked="OnRegisterClicked"
+                FontSize="12" />
+
+    </VerticalStackLayout>
+</ContentPage>

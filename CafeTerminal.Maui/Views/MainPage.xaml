@@ -5,98 +5,108 @@
     x:Class="CafeTerminal.Maui.Views.MainPage"
     Title="Cafe Terminal">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="24">
+    <VerticalStackLayout Padding="20" Spacing="20">
 
-            <!-- PRODUCTS -->
-            <Label Text="Products" FontSize="22" FontAttributes="Bold" />
+        <Button
+            Text="Logout"
+            Command="{Binding LogoutCommand}"
+            BackgroundColor="Red"
+            TextColor="White"
+            HorizontalOptions="End"
+            WidthRequest="100" />
 
-            <Entry
-                Placeholder="Product name"
-                Text="{Binding NewProductName}" />
+        <ScrollView>
+            <VerticalStackLayout Spacing="24">
 
-            <Entry
-                Placeholder="Price"
-                Keyboard="Numeric"
-                Text="{Binding NewProductPrice}" />
+                <!-- PRODUCTS -->
+                <Label Text="Products" FontSize="22" FontAttributes="Bold" />
 
-            <Button
-                Text="Add product"
-                Command="{Binding AddProductCommand}" />
+                <Entry
+                    Placeholder="Product name"
+                    Text="{Binding NewProductName}" />
 
-            <CollectionView ItemsSource="{Binding Products}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <HorizontalStackLayout Spacing="12">
-                            <Label Text="{Binding Name}" />
-                            <Label Text="{Binding Price}" />
-                            <Button
-                                Text="Delete"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
-                                                  Path=BindingContext.DeleteProductCommand}"
-                                CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <Entry
+                    Placeholder="Price"
+                    Keyboard="Numeric"
+                    Text="{Binding NewProductPrice}" />
 
-            <!-- TABLES -->
-            <Label Text="Tables" FontSize="22" FontAttributes="Bold" />
+                <Button
+                    Text="Add product"
+                    Command="{Binding AddProductCommand}" />
 
-            <Entry
-                Placeholder="Table name"
-                Text="{Binding NewTableName}" />
+                <CollectionView ItemsSource="{Binding Products}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout Spacing="12">
+                                <Label Text="{Binding Name}" />
+                                <Label Text="{Binding Price}" />
+                                <Button
+                                    Text="Delete"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteProductCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <Entry
-                Placeholder="Table number"
-                Keyboard="Numeric"
-                Text="{Binding NewTableNumber}" />
+                <!-- TABLES -->
+                <Label Text="Tables" FontSize="22" FontAttributes="Bold" />
 
-            <Button
-                Text="Add table"
-                Command="{Binding AddTableCommand}" />
+                <Entry
+                    Placeholder="Table name"
+                    Text="{Binding NewTableName}" />
 
-            <CollectionView ItemsSource="{Binding Tables}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <HorizontalStackLayout Spacing="12">
-                            <Label Text="{Binding Name}" />
-                            <Label Text="{Binding Number}" />
-                            <Button
-                                Text="Delete"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
-                                                  Path=BindingContext.DeleteTableCommand}"
-                                CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <Entry
+                    Placeholder="Table number"
+                    Keyboard="Numeric"
+                    Text="{Binding NewTableNumber}" />
 
-            <!-- ORDERS -->
-            <Label Text="Orders" FontSize="22" FontAttributes="Bold" />
+                <Button
+                    Text="Add table"
+                    Command="{Binding AddTableCommand}" />
 
-            <Picker
-                Title="Select table"
-                ItemsSource="{Binding Tables}"
-                ItemDisplayBinding="{Binding Name}"
-                SelectedItem="{Binding SelectedTable}" />
+                <CollectionView ItemsSource="{Binding Tables}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout Spacing="12">
+                                <Label Text="{Binding Name}" />
+                                <Label Text="{Binding Number}" />
+                                <Button
+                                    Text="Delete"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteTableCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <Button
-                Text="Add order"
-                Command="{Binding AddOrderCommand}" />
+                <!-- ORDERS -->
+                <Label Text="Orders" FontSize="22" FontAttributes="Bold" />
 
-            <CollectionView ItemsSource="{Binding Orders}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="{Binding TableId, StringFormat='Table ID: {0}'}" />
-                            <Label Text="{Binding CreatedAt, StringFormat='Created: {0}'}" />
-                            <Label Text="{Binding IsClosed, StringFormat='Closed: {0}'}" />
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <Picker
+                    Title="Select table"
+                    ItemsSource="{Binding Tables}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedTable}" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <Button
+                    Text="Add order"
+                    Command="{Binding AddOrderCommand}" />
+
+                <CollectionView ItemsSource="{Binding Orders}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding TableId, StringFormat='Table ID: {0}'}" />
+                                <Label Text="{Binding CreatedAt, StringFormat='Created: {0}'}" />
+                                <Label Text="{Binding IsClosed, StringFormat='Closed: {0}'}" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </VerticalStackLayout>
 </ContentPage>

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CafeTerminal.Shared.Models;
 using CafeTerminal.Maui.Services;
 using System.Collections.ObjectModel;
+using CafeTerminal.Maui.Views;
 using System.Threading.Tasks;
 
 namespace CafeTerminal.Maui.ViewModels;
@@ -12,6 +13,7 @@ public partial class MainViewModel : ObservableObject
     public readonly ProductService _productService;
     public readonly TableService _tableService;
     public readonly OrderService _orderService;
+    private readonly IServiceProvider _services;
 
     public MainViewModel(ProductService productService, TableService tableService, OrderService orderService)
     {
@@ -131,5 +133,12 @@ public partial class MainViewModel : ObservableObject
         if (order == null) return;
         var success = await _orderService.DeleteOrderAsync(order.Id);
         if (success) Orders.Remove(order);
+    }
+
+    private async Task LogoutAsync()
+    {
+        await SecureStorage.SetAsync("auth_token", "");
+        var loginPage = _services.GetService<LoginPage>();
+        Application.Current.MainPage = new NavigationPage(loginPage);
     }
 }

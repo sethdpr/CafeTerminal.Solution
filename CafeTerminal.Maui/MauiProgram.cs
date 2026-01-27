@@ -30,12 +30,20 @@ public static class MauiProgram
             BaseAddress = new Uri(apiBase)
         });
 
+        // Services
+        builder.Services.AddSingleton<AuthService>();
         builder.Services.AddSingleton<ProductService>();
         builder.Services.AddSingleton<TableService>();
         builder.Services.AddSingleton<OrderService>();
 
+        // ViewModels
+        builder.Services.AddSingleton<LoginViewModel>();
+        builder.Services.AddSingleton<RegisterViewModel>();
         builder.Services.AddSingleton<MainViewModel>();
 
+        // Pages
+        builder.Services.AddSingleton<LoginPage>();
+        builder.Services.AddSingleton<RegisterPage>();
         builder.Services.AddSingleton<MainPage>();
 
         return builder.Build();

@@ -36,4 +36,22 @@
 		<ProjectReference Include="..\CafeTerminal.Shared\CafeTerminal.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\LoginPage.xaml.cs">
+	    <DependentUpon>LoginPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\RegisterPage.xaml.cs">
+	    <DependentUpon>RegisterPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\LoginPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\RegisterPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
