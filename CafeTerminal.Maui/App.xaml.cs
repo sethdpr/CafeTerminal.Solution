@@ -5,15 +5,10 @@ namespace CafeTerminal.Maui
 {
     public partial class App : Application
     {
-        public App(LoginPage loginPage)
+        public App()
         {
             InitializeComponent();
-            MainPage = new NavigationPage(loginPage);
-        }
-
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(MainPage);
+            MainPage = new AppShell(); //set the main page to AppShell wich automatically shows the first ShellContent: LoginPage
         }
     }
 }

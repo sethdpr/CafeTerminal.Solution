@@ -9,22 +9,17 @@
                HorizontalOptions="Center" />
 
         <Entry Placeholder="Email"
-               Keyboard="Email"
-               Text="{Binding Email}" />
+               x:Name="EmailEntry" />
 
         <Entry Placeholder="Username"
-               Text="{Binding Username}" />
+               x:Name="UsernameEntry" />
 
         <Entry Placeholder="Wachtwoord"
                IsPassword="True"
-               Text="{Binding Password}" />
-
-        <Label Text="{Binding Message}"
-               FontSize="12"
-               TextColor="Green" />
+               x:Name="PasswordEntry" />
 
         <Button Text="Registreer"
-                Command="{Binding RegisterCommand}"/>
+                Clicked="OnRegisterClicked"/>
 
     </VerticalStackLayout>
 </ContentPage>

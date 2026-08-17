@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using CafeTerminal.Api.Data;
+﻿using CafeTerminal.Api.Data;
+using CafeTerminal.Api.Services;
 using CafeTerminal.Shared.DTOs;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CafeTerminal.Api.Controllers
 {
@@ -15,98 +11,66 @@ namespace CafeTerminal.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly JwtService _jwtService;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
-            IConfiguration configuration)
+            JwtService jwtService)
         {
             _userManager = userManager;
-            _configuration = configuration;
+            _jwtService = jwtService;
         }
 
-        // ------------------------
-        // REGISTER
-        // ------------------------
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest registerRequest) //this endpoint uses the RegisterRequest DTO. The Api validates the request input and saves it to the database
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser != null)
-                return BadRequest("User already exists");
-
             var user = new ApplicationUser
             {
-                UserName = request.Email,
-                Email = request.Email
-            };
+                UserName = registerRequest.Username,
+                Email = registerRequest.Email,
+                CreatedAt = DateTime.UtcNow
+            }; //new instance of ApplicationUser gets created with the data from the RegisterRequest DTO
 
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user, registerRequest.Password); //the UserManager service creates the user in the database with the provided password
 
             if (!result.Succeeded)
-                return BadRequest(result.Errors);
+            {
+                return BadRequest(result.Errors); //if the creation fails, return the errors
+            }
 
-            return Ok("Registration successful");
+            var token = _jwtService.GenerateToken(user); // Generate a JWT token for the newly registered user
+
+            return Ok(new
+            {
+                message = "Gebruiker succesvol geregistreerd",
+                token = token
+            });
         }
 
-        // ------------------------
-        // LOGIN
-        // ------------------------
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponse>> Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest loginRequest) //this endpoint uses the LoginRequest DTO. The Api validates the request input and checks the credentials
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var user = await _userManager.FindByNameAsync(loginRequest.Username); //find the user by username
 
-            var user = await _userManager.FindByNameAsync(request.Username);
             if (user == null)
-                return Unauthorized("Invalid credentials");
+            {
+                return Unauthorized("Ongeldige gebruikersnaam of wachtwoord"); //if user not found, return unauthorized
+            }
 
-            var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+            var passwordValid = await _userManager.CheckPasswordAsync(user, loginRequest.Password); //check if the provided password is correct
+
             if (!passwordValid)
-                return Unauthorized("Invalid credentials");
-
-            var token = GenerateJwtToken(user);
-
-            return Ok(token);
-        }
-
-        // ------------------------
-        // JWT GENERATOR
-        // ------------------------
-        private AuthResponse GenerateJwtToken(ApplicationUser user)
-        {
-            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                return Unauthorized("Ongeldige gebruikersnaam of wachtwoord"); //if password is incorrect, return unauthorized
+            }
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var token = _jwtService.GenerateToken(user); // Generate a JWT token for the authenticated user
 
-            var credentials = new SigningCredentials(
-                key, SecurityAlgorithms.HmacSha256);
-
-            var expiration = DateTime.UtcNow.AddHours(2);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: expiration,
-                signingCredentials: credentials
-            );
-
-            return new AuthResponse
+            return Ok(new
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
-            };
+                message = "Inloggen succesvol",
+                token = token
+            });
         }
     }
 }

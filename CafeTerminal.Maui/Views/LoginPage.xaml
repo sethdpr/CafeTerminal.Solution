@@ -8,23 +8,18 @@
                FontSize="24"
                HorizontalOptions="Center" />
 
-        <Entry Placeholder="Email"
-               Keyboard="Email"
-               Text="{Binding Email}" />
+        <Entry Placeholder="Username"
+               x:Name="UsernameEntry" />
 
         <Entry Placeholder="Wachtwoord"
-               IsPassword="True"
-               Text="{Binding Password}" />
-
-        <Label Text="{Binding ErrorMessage}"
-               TextColor="Red"
-               FontSize="12" />
+               x:Name="PasswordEntry"
+               IsPassword="True" />
 
         <Button Text="Login"
-                Command="{Binding LoginCommand}" />
+                Clicked="OnLoginClicked" />
 
         <Button Text="Nog geen account? Registreer"
-                Clicked="OnRegisterClicked"
+                Clicked="OnRegisterHereClicked"
                 FontSize="12" />
 
     </VerticalStackLayout>

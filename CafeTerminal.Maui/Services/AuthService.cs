@@ -1,48 +1,19 @@
-﻿using CafeTerminal.Shared.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CafeTerminal.Maui.Services
+﻿namespace CafeTerminal.Maui.Services
 {
-    public class AuthService
+    public class AuthService //Can be used for all sorts of authentication related functionality
     {
-        private readonly HttpClient _client;
+        private const string TokenKey = "auth_token";
 
-        public AuthService()
+        public async Task<bool> IsLoggedInAsync()
         {
-            _client = new HttpClient
-            {
-                BaseAddress = new Uri("https://10.0.2.2:5001/api/")
-            };
+            var token = await SecureStorage.Default.GetAsync(TokenKey);
+
+            return !string.IsNullOrWhiteSpace(token);
         }
 
-        public async Task<AuthResponse> LoginAsync(LoginRequest request)
+        public async Task LogoutAsync()
         {
-            var response = await _client.PostAsJsonAsync("auth/login", request);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<AuthResponse>();
-        }
-
-        public async Task RegisterAsync(RegisterRequest request)
-        {
-            var response = await _client.PostAsJsonAsync("auth/register", request);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task AddAuthHeaderAsync()
-        {
-            var token = await SecureStorage.GetAsync("auth_token");
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                _client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
-            }
+            SecureStorage.Default.Remove(TokenKey);
         }
     }
 }

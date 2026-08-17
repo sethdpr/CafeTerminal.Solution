@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Shell
+<Shell 
     x:Class="CafeTerminal.Maui.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:CafeTerminal.Maui.Views"
-    Shell.FlyoutBehavior="Flyout"
-    Title="CafeTerminal.Maui">
+    Shell.FlyoutBehavior="Flyout">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        x:Name="LoginShellContent"
+        Title="Log in"
+        Route="login"
+        ContentTemplate="{DataTemplate local:LoginPage}"/>
+    <ShellContent
+        x:Name="RegisterShellContent"
+        Title="Registreer"
+        Route="register"
+        ContentTemplate="{DataTemplate local:RegisterPage}"/>
+    <ShellContent
+        x:Name="MainShellContent"
+        Title="Hoofdpagina"
+        Route="main"
+        ContentTemplate="{DataTemplate local:MainPage}"/>
 
 </Shell>
+
+
+<!--this page is the blueprint of the app. It defines the pages and navigation between them-->

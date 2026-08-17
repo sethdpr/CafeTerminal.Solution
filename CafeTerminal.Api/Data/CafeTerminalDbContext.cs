@@ -1,18 +1,13 @@
-﻿using CafeTerminal.Shared.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace CafeTerminal.Api.Data
 {
-    public class CafeTerminalDbContext : DbContext
+    public class CafeTerminalDbContext : IdentityDbContext<ApplicationUser>
     {
         public CafeTerminalDbContext(DbContextOptions<CafeTerminalDbContext> options)
             : base(options)
         {
         }
-
-        public DbSet<Product> Products => Set<Product>();
-        public DbSet<Table> Tables => Set<Table>();
-        public DbSet<Order> Orders => Set<Order>();
-        public DbSet<OrderLine> OrderLines => Set<OrderLine>();
     }
 }

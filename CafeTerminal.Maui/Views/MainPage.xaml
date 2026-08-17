@@ -9,11 +9,15 @@
 
         <Button
             Text="Logout"
-            Command="{Binding LogoutCommand}"
+            Clicked="OnLogoutClicked"
             BackgroundColor="Red"
             TextColor="White"
             HorizontalOptions="End"
             WidthRequest="100" />
+
+        <Button
+            Text="Test beveiligde API"
+            Clicked="OnTestApiClicked" />
 
         <ScrollView>
             <VerticalStackLayout Spacing="24">
