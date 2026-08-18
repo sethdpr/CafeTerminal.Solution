@@ -5,21 +5,17 @@
     x:Class="CafeTerminal.Maui.Views.MainPage"
     Title="Cafe Terminal">
 
-    <VerticalStackLayout Padding="20" Spacing="20">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
 
-        <Button
-            Text="Logout"
-            Clicked="OnLogoutClicked"
-            BackgroundColor="Red"
-            TextColor="White"
-            HorizontalOptions="End"
-            WidthRequest="100" />
+            <Button
+                Text="Logout"
+                Clicked="OnLogoutClicked"
+                BackgroundColor="Red"
+                TextColor="White"
+                HorizontalOptions="End"
+                WidthRequest="100" />
 
-        <Button
-            Text="Test beveiligde API"
-            Clicked="OnTestApiClicked" />
-
-        <ScrollView>
             <VerticalStackLayout Spacing="24">
 
                 <!-- PRODUCTS -->
@@ -38,7 +34,7 @@
                     Text="Add product"
                     Command="{Binding AddProductCommand}" />
 
-                <CollectionView ItemsSource="{Binding Products}">
+                <CollectionView ItemsSource="{Binding Products}" HeightRequest="200">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <HorizontalStackLayout Spacing="12">
@@ -69,7 +65,7 @@
                     Text="Add table"
                     Command="{Binding AddTableCommand}" />
 
-                <CollectionView ItemsSource="{Binding Tables}">
+                <CollectionView ItemsSource="{Binding Tables}" HeightRequest="200">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <HorizontalStackLayout Spacing="12">
@@ -97,7 +93,7 @@
                     Text="Add order"
                     Command="{Binding AddOrderCommand}" />
 
-                <CollectionView ItemsSource="{Binding Orders}">
+                <CollectionView ItemsSource="{Binding Orders}" HeightRequest="200">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <VerticalStackLayout Spacing="4">
@@ -110,7 +106,6 @@
                 </CollectionView>
 
             </VerticalStackLayout>
-        </ScrollView>
-
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
