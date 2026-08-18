@@ -16,7 +16,7 @@ namespace CafeTerminal.Maui
             // Register routes so navigation works even if Shell items are modified at runtime
             Routing.RegisterRoute("login", typeof(LoginPage));
             Routing.RegisterRoute("register", typeof(RegisterPage));
-            Routing.RegisterRoute("main", typeof(MainPage));
+            Routing.RegisterRoute("tables", typeof(TablesPage));
 
             _authService = new AuthService();
 
@@ -31,7 +31,7 @@ namespace CafeTerminal.Maui
             object? sender,
             ShellNavigatingEventArgs args)
         {
-            if (args.Target.Location.OriginalString.Contains("main"))
+            if (args.Target.Location.OriginalString.Contains("tables"))
             {
                 var isLoggedIn = await _authService.IsLoggedInAsync();
 
@@ -61,7 +61,7 @@ namespace CafeTerminal.Maui
 
                 if (isLoggedIn)
                 {
-                    Items.Add(MainShellContent);
+                    Items.Add(TablesShellContent);
                 }
                 else
                 {
@@ -81,12 +81,12 @@ namespace CafeTerminal.Maui
         }
 
         // Public helper to refresh shell items and navigate to the main page after login
-        public async Task ShowLoggedInAndNavigateToMainAsync()
+        public async Task ShowLoggedInAndNavigateToTablesAsync()
         {
             await UpdateShellItemsAsync();
 
-            // After items are updated, navigate to the registered main route.
-            await GoToAsync("///main");
+            // After items are updated, navigate to the registered tables route.
+            await GoToAsync("///tables");
         }
     }
 }

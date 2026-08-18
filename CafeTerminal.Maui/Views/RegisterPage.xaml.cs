@@ -88,11 +88,11 @@ public partial class RegisterPage : ContentPage
                 // Rebuild the shell items for the logged-in state before navigating
                 if (Shell.Current is AppShell appShell)
                 {
-                    await appShell.ShowLoggedInAndNavigateToMainAsync();
+                    await appShell.ShowLoggedInAndNavigateToTablesAsync();
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("///main");
+                    await Shell.Current.GoToAsync("///tables");
                 }
 
                 /*We use "///" to navigate between Shell-elements.

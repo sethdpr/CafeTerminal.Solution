@@ -78,6 +78,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<JwtService>(); //If a controller needs to generate a JWT token, it can use this service
+builder.Services.AddSingleton<ITableService, TableService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

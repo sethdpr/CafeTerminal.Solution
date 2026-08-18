@@ -17,10 +17,10 @@
         Route="register"
         ContentTemplate="{DataTemplate local:RegisterPage}"/>
     <ShellContent
-        x:Name="MainShellContent"
+        x:Name="TablesShellContent"
         Title="Hoofdpagina"
-        Route="main"
-        ContentTemplate="{DataTemplate local:MainPage}"/>
+        Route="tables"
+        ContentTemplate="{DataTemplate local:TablesPage}"/>
 
 </Shell>
 

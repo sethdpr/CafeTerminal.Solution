@@ -1,5 +1,8 @@
 ﻿using CafeTerminal.Maui.Views;
 
+using CafeTerminal.Maui.Views;
+using CafeTerminal.Maui.Services;
+
 namespace CafeTerminal.Maui;
 
 public static class MauiProgram
@@ -28,10 +31,14 @@ public static class MauiProgram
             BaseAddress = new Uri(apiBase)
         });
 
+        // Services
+        builder.Services.AddSingleton<ApiService>();
+        builder.Services.AddSingleton<AuthService>();
+
         // Pages
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<RegisterPage>();
-        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<TablesPage>();
 
         return builder.Build();
     }
