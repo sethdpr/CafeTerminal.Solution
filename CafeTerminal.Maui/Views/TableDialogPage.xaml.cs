@@ -70,8 +70,29 @@ public partial class TableDialogPage : ContentPage
 
     private async void OnAddOrderClicked(object sender, EventArgs e)
     {
-        // Placeholder - will call API or navigate to order page later
-        await DisplayAlert("Info", "Voeg bestelling - nog niet geïmplementeerd", "OK");
+        // Open order creation page modally; after it closes refresh orders for this table
+        var orderPage = new OrderCreatePage(_table.Number);
+        await Shell.Current.Navigation.PushModalAsync(orderPage);
+
+        // After returning, reload orders for this table and show the latest order summary
+        try
+        {
+            var services = Application.Current?.Handler?.MauiContext?.Services;
+            var api = services?.GetService<ApiService>();
+            if (api != null)
+            {
+                var orders = await api.GetOrdersForTableAsync(_table.Number);
+                if (orders != null && orders.Count > 0)
+                {
+                    var latest = orders.OrderByDescending(o => o.CreatedAt).First();
+                    await DisplayAlert("Bestelling opgeslagen", $"Totaal: {latest.TotalPrice:F2} EUR", "OK");
+                }
+            }
+        }
+        catch
+        {
+            // ignore
+        }
     }
 
     private async void OnPaymentClicked(object sender, EventArgs e)

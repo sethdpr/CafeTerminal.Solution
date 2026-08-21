@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CafeTerminal.Maui.Views.OrderCreatePage"
+    Title="Nieuwe bestelling">
+
+    <VerticalStackLayout Padding="12" Spacing="8">
+        <Label Text="Select products and quantities" FontSize="18" />
+
+        <CollectionView x:Name="ProductsList" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="8" Margin="4" HasShadow="False" BorderColor="LightGray">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding Name}" VerticalOptions="Center" />
+                            <Label Text="{Binding Price, StringFormat='{0:F2} EUR'}" VerticalOptions="Center" />
+                            <Stepper Minimum="0" Maximum="20" Increment="1" ValueChanged="OnQuantityChanged" />
+                            <Label Text="{Binding Quantity}" WidthRequest="40" HorizontalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <HorizontalStackLayout Spacing="8">
+            <Button Text="Save order" Clicked="OnSaveOrderClicked" />
+            <Button Text="Cancel" Clicked="OnCancelClicked" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

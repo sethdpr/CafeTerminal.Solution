@@ -34,11 +34,14 @@ public static class MauiProgram
         // Services
         builder.Services.AddSingleton<ApiService>();
         builder.Services.AddSingleton<AuthService>();
+        builder.Services.AddSingleton<OrderCreatePage>();
 
         // Pages
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<RegisterPage>();
         builder.Services.AddSingleton<TablesPage>();
+        builder.Services.AddSingleton<ProductsPage>();
+        builder.Services.AddSingleton<OrderCreatePage>();
 
         return builder.Build();
     }

@@ -17,11 +17,11 @@ namespace CafeTerminal.Maui
             Routing.RegisterRoute("login", typeof(LoginPage));
             Routing.RegisterRoute("register", typeof(RegisterPage));
             Routing.RegisterRoute("tables", typeof(TablesPage));
+            Routing.RegisterRoute("products", typeof(ProductsPage));
 
             _authService = new AuthService();
 
             Navigating += OnShellNavigating;
-            Navigated += OnShellNavigated;
 
             // Initialize menu items based on login state
             _ = UpdateShellItemsAsync();
@@ -31,7 +31,7 @@ namespace CafeTerminal.Maui
             object? sender,
             ShellNavigatingEventArgs args)
         {
-            if (args.Target.Location.OriginalString.Contains("tables"))
+            if (args.Target.Location.OriginalString.Contains("tables") || args.Target.Location.OriginalString.Contains("products"))
             {
                 var isLoggedIn = await _authService.IsLoggedInAsync();
 
@@ -44,11 +44,8 @@ namespace CafeTerminal.Maui
             }
         }
 
-        private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
-        {
-            // Refresh the visible shell items after navigation to reflect login state
-            _ = UpdateShellItemsAsync();
-        }
+        // Removed automatic refresh on every navigation to avoid resetting the current page.
+        // Shell items are refreshed explicitly after login/logout via the helper methods.
 
         private async Task UpdateShellItemsAsync()
         {
@@ -62,6 +59,7 @@ namespace CafeTerminal.Maui
                 if (isLoggedIn)
                 {
                     Items.Add(TablesShellContent);
+                    Items.Add(ProductsShellContent);
                 }
                 else
                 {
@@ -87,6 +85,15 @@ namespace CafeTerminal.Maui
 
             // After items are updated, navigate to the registered tables route.
             await GoToAsync("///tables");
+        }
+
+        // Public helper to refresh shell items and navigate to the products page after login
+        public async Task ShowLoggedInAndNavigateToProductsAsync()
+        {
+            await UpdateShellItemsAsync();
+
+            // After items are updated, navigate to the registered products route.
+            await GoToAsync("///products");
         }
     }
 }

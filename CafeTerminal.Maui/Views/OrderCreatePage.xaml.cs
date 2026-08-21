@@ -1,0 +1,121 @@
+using CafeTerminal.Shared.DTOs;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using CafeTerminal.Shared.DTOs;
+using CafeTerminal.Maui.Services;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CafeTerminal.Maui.Views;
+
+public partial class OrderCreatePage : ContentPage
+{
+    private readonly ApiService _apiService;
+    private readonly int _tableNumber;
+
+    public ObservableCollection<ProductOrderRow> Rows { get; } = new();
+
+    public OrderCreatePage(int tableNumber)
+    {
+        InitializeComponent();
+
+        _tableNumber = tableNumber;
+
+        var services = Application.Current?.Handler?.MauiContext?.Services;
+        _apiService = services?.GetService<ApiService>() ?? new ApiService(new HttpClient { BaseAddress = new Uri("https://localhost:7232") });
+
+        ProductsList.ItemsSource = Rows;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        try
+        {
+            var products = await _apiService.GetProductsAsync();
+            Rows.Clear();
+            foreach (var p in products)
+            {
+                Rows.Add(new ProductOrderRow { ProductId = p.Id, Name = p.Name, Price = p.Price, Quantity = 0 });
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fout", $"Kon producten niet laden: {ex.Message}", "OK");
+        }
+    }
+
+    private void OnQuantityChanged(object sender, ValueChangedEventArgs e)
+    {
+        if (sender is Stepper stepper && stepper.BindingContext is ProductOrderRow row)
+        {
+            row.Quantity = (int)e.NewValue;
+            // refresh ItemsSource binding
+            ProductsList.ItemsSource = null;
+            ProductsList.ItemsSource = Rows;
+        }
+    }
+
+    private async void OnSaveOrderClicked(object sender, EventArgs e)
+    {
+        var items = Rows.Where(r => r.Quantity > 0)
+            .Select(r => new CreateOrderItemRequest { ProductId = r.ProductId, Quantity = r.Quantity })
+            .ToList();
+
+        if (!items.Any())
+        {
+            await DisplayAlert("Fout", "Selecteer minstens één product met hoeveelheid.", "OK");
+            return;
+        }
+
+        var req = new CreateOrderRequest { TableNumber = _tableNumber, Items = items };
+        try
+        {
+            var created = await _apiService.CreateOrderAsync(req);
+            if (created != null)
+            {
+                await DisplayAlert("Succes", $"Bestelling aangemaakt. Totaal: {created.TotalPrice:F2} EUR", "OK");
+                await Shell.Current.Navigation.PopModalAsync();
+            }
+            else
+            {
+                await DisplayAlert("Fout", "Kon bestelling niet aanmaken.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Fout", $"Fout bij aanmaken bestelling: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.Navigation.PopModalAsync();
+    }
+
+    public class ProductOrderRow : INotifyPropertyChanged
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+
+        private int _quantity;
+        public int Quantity
+        {
+            get => _quantity;
+            set
+            {
+                if (_quantity != value)
+                {
+                    _quantity = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Quantity)));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+    }
+}

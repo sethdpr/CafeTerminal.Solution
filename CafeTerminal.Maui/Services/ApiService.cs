@@ -51,5 +51,68 @@ namespace CafeTerminal.Maui.Services
             var resp = await _httpClient.PutAsync($"/api/tables/{number}", content);
             return resp.IsSuccessStatusCode;
         }
+
+        public async Task<List<ProductDto>> GetProductsAsync()
+        {
+            await AttachAuthHeaderAsync();
+
+            var resp = await _httpClient.GetAsync("/api/products");
+            resp.EnsureSuccessStatusCode();
+
+            var json = await resp.Content.ReadAsStringAsync();
+            var list = JsonSerializer.Deserialize<List<ProductDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<ProductDto>();
+            return list;
+        }
+
+        public async Task<ProductDto?> CreateProductAsync(string name, decimal price)
+        {
+            await AttachAuthHeaderAsync();
+
+            var payload = new ProductDto { Name = name ?? string.Empty, Price = price };
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var resp = await _httpClient.PostAsync("/api/products", content);
+            if (!resp.IsSuccessStatusCode)
+                return null;
+
+            var responseJson = await resp.Content.ReadAsStringAsync();
+            var created = JsonSerializer.Deserialize<ProductDto>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return created;
+        }
+
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            await AttachAuthHeaderAsync();
+
+            var resp = await _httpClient.DeleteAsync($"/api/products/{id}");
+            return resp.IsSuccessStatusCode;
+        }
+
+        public async Task<OrderDto?> CreateOrderAsync(CreateOrderRequest request)
+        {
+            await AttachAuthHeaderAsync();
+
+            var json = JsonSerializer.Serialize(request);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var resp = await _httpClient.PostAsync("/api/orders", content);
+            if (!resp.IsSuccessStatusCode) return null;
+
+            var responseJson = await resp.Content.ReadAsStringAsync();
+            var created = JsonSerializer.Deserialize<OrderDto>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return created;
+        }
+
+        public async Task<List<OrderDto>> GetOrdersForTableAsync(int tableNumber)
+        {
+            await AttachAuthHeaderAsync();
+
+            var resp = await _httpClient.GetAsync($"/api/orders/table/{tableNumber}");
+            resp.EnsureSuccessStatusCode();
+
+            var json = await resp.Content.ReadAsStringAsync();
+            var list = JsonSerializer.Deserialize<List<OrderDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<OrderDto>();
+            return list;
+        }
     }
 }

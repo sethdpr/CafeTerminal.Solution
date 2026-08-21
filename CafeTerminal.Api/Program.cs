@@ -78,13 +78,22 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<JwtService>(); //If a controller needs to generate a JWT token, it can use this service
-builder.Services.AddSingleton<ITableService, TableService>();
+builder.Services.AddScoped<ITableService, TableService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CafeTerminalDbContext>();
     db.Database.EnsureCreated();
+    // Initialize tables via the table service after ensuring the database exists
+    var tableService = scope.ServiceProvider.GetRequiredService<ITableService>();
+    tableService.InitializeAsync().GetAwaiter().GetResult();
+    var productService = scope.ServiceProvider.GetRequiredService<IProductService>();
+    productService.InitializeAsync().GetAwaiter().GetResult();
+    var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
+    orderService.InitializeAsync().GetAwaiter().GetResult();
 }
 
 if (app.Environment.IsDevelopment())

@@ -18,10 +18,14 @@
         ContentTemplate="{DataTemplate local:RegisterPage}"/>
     <ShellContent
         x:Name="TablesShellContent"
-        Title="Hoofdpagina"
+        Title="Tafels"
         Route="tables"
         ContentTemplate="{DataTemplate local:TablesPage}"/>
-
+    <ShellContent
+        x:Name="ProductsShellContent"
+        Title="Producten"
+        Route="products"
+        ContentTemplate="{DataTemplate local:ProductsPage}"/>
 </Shell>
 
 
