@@ -11,6 +11,7 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ApiService _apiService;
     private readonly AuthService _auth_service;
+    private bool _isTableDialogOpen;
 
     public ObservableCollection<TabItem> Tabs { get; } = new();
 
@@ -70,9 +71,15 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
             {
                 // Double-click detected
                 _lastTapTimes.Remove(ti.Number);
-                var dialog = new TableDialogPage(ti);
-                // Use Shell navigation to ensure modal works inside Shell
-                await Shell.Current.Navigation.PushModalAsync(dialog);
+
+                if (_isTableDialogOpen || Navigation.ModalStack.LastOrDefault() is NavigationPage)
+                {
+                    return;
+                }
+
+                _isTableDialogOpen = true;
+                var dialog = new NavigationPage(new TableDialogPage(ti));
+                await Navigation.PushModalAsync(dialog);
                 return;
             }
 
@@ -125,6 +132,8 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        _isTableDialogOpen = false;
 
         if (_apiService != null)
         {

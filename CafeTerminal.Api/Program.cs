@@ -86,8 +86,18 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CafeTerminalDbContext>();
-    db.Database.EnsureCreated();
-    // Initialize tables via the table service after ensuring the database exists
+    try
+    {
+        // Apply EF Core migrations (preferred)
+        db.Database.Migrate();
+    }
+    catch
+    {
+        // If migrations cannot be applied for some reason, fall back to EnsureCreated
+        db.Database.EnsureCreated();
+    }
+
+    // Also call InitializeAsync on services to ensure any legacy databases get required tables/columns
     var tableService = scope.ServiceProvider.GetRequiredService<ITableService>();
     tableService.InitializeAsync().GetAwaiter().GetResult();
     var productService = scope.ServiceProvider.GetRequiredService<IProductService>();

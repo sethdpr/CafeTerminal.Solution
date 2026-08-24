@@ -25,4 +25,8 @@
     <ProjectReference Include="..\CafeTerminal.Shared\CafeTerminal.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

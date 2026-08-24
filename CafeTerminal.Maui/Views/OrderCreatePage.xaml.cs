@@ -48,17 +48,6 @@ public partial class OrderCreatePage : ContentPage
         }
     }
 
-    private void OnQuantityChanged(object sender, ValueChangedEventArgs e)
-    {
-        if (sender is Stepper stepper && stepper.BindingContext is ProductOrderRow row)
-        {
-            row.Quantity = (int)e.NewValue;
-            // refresh ItemsSource binding
-            ProductsList.ItemsSource = null;
-            ProductsList.ItemsSource = Rows;
-        }
-    }
-
     private async void OnSaveOrderClicked(object sender, EventArgs e)
     {
         var items = Rows.Where(r => r.Quantity > 0)
@@ -78,7 +67,7 @@ public partial class OrderCreatePage : ContentPage
             if (created != null)
             {
                 await DisplayAlert("Succes", $"Bestelling aangemaakt. Totaal: {created.TotalPrice:F2} EUR", "OK");
-                await Shell.Current.Navigation.PopModalAsync();
+                await Navigation.PopAsync();
             }
             else
             {
@@ -93,7 +82,7 @@ public partial class OrderCreatePage : ContentPage
 
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        await Shell.Current.Navigation.PopModalAsync();
+        await Navigation.PopAsync();
     }
 
     public class ProductOrderRow : INotifyPropertyChanged

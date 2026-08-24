@@ -11,6 +11,7 @@ public partial class TableDialogPage : ContentPage
 {
     private readonly TablesPage.TableItem _table;
     private readonly ApiService? _apiService;
+    private bool _isOrderPageOpen;
 
     public TableDialogPage(TablesPage.TableItem table)
     {
@@ -31,6 +32,12 @@ public partial class TableDialogPage : ContentPage
             AddOrderButton.IsVisible = true;
             PaymentButton.IsVisible = true;
         }
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _isOrderPageOpen = false;
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
@@ -55,7 +62,7 @@ public partial class TableDialogPage : ContentPage
             {
                 _table.Name = name;
                 await DisplayAlert("Succes", "Tabelnaam opgeslagen", "OK");
-                await Shell.Current.Navigation.PopModalAsync();
+                await Navigation.PopModalAsync();
             }
             else
             {
@@ -70,29 +77,19 @@ public partial class TableDialogPage : ContentPage
 
     private async void OnAddOrderClicked(object sender, EventArgs e)
     {
-        // Open order creation page modally; after it closes refresh orders for this table
-        var orderPage = new OrderCreatePage(_table.Number);
-        await Shell.Current.Navigation.PushModalAsync(orderPage);
+        if (_isOrderPageOpen || Navigation.NavigationStack.LastOrDefault() is OrderCreatePage)
+        {
+            return;
+        }
 
-        // After returning, reload orders for this table and show the latest order summary
-        try
-        {
-            var services = Application.Current?.Handler?.MauiContext?.Services;
-            var api = services?.GetService<ApiService>();
-            if (api != null)
-            {
-                var orders = await api.GetOrdersForTableAsync(_table.Number);
-                if (orders != null && orders.Count > 0)
-                {
-                    var latest = orders.OrderByDescending(o => o.CreatedAt).First();
-                    await DisplayAlert("Bestelling opgeslagen", $"Totaal: {latest.TotalPrice:F2} EUR", "OK");
-                }
-            }
-        }
-        catch
-        {
-            // ignore
-        }
+        _isOrderPageOpen = true;
+
+        // Open order creation page on the dialog's own navigation stack
+        var orderPage = new OrderCreatePage(_table.Number);
+        await Navigation.PushAsync(orderPage);
+
+        // Note: After the modal is popped, this page appears again.
+        // The guard is reset in OnAppearing.
     }
 
     private async void OnPaymentClicked(object sender, EventArgs e)
@@ -103,6 +100,6 @@ public partial class TableDialogPage : ContentPage
 
     private async void OnCloseClicked(object sender, EventArgs e)
     {
-        await Shell.Current.Navigation.PopModalAsync();
+        await Navigation.PopModalAsync();
     }
 }

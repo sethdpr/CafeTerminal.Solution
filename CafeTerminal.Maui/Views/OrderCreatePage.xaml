@@ -13,10 +13,10 @@
                 <DataTemplate>
                     <Frame Padding="8" Margin="4" HasShadow="False" BorderColor="LightGray">
                         <HorizontalStackLayout Spacing="8">
-                            <Label Text="{Binding Name}" VerticalOptions="Center" />
-                            <Label Text="{Binding Price, StringFormat='{0:F2} EUR'}" VerticalOptions="Center" />
-                            <Stepper Minimum="0" Maximum="20" Increment="1" ValueChanged="OnQuantityChanged" />
-                            <Label Text="{Binding Quantity}" WidthRequest="40" HorizontalTextAlignment="Center" />
+                            <Label Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" WidthRequest="120" />
+                            <Label Text="{Binding Price, StringFormat='{0:F2} EUR'}" VerticalOptions="Center" WidthRequest="80" />
+                            <Stepper Minimum="0" Maximum="20" Increment="1" Value="{Binding Quantity, Mode=TwoWay}" VerticalOptions="Center" />
+                            <Label Text="{Binding Quantity}" WidthRequest="40" HorizontalTextAlignment="Center" VerticalOptions="Center" />
                         </HorizontalStackLayout>
                     </Frame>
                 </DataTemplate>
