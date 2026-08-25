@@ -41,6 +41,11 @@ public partial class OrderCreatePage : ContentPage
             {
                 Rows.Add(new ProductOrderRow { ProductId = p.Id, Name = p.Name, Price = p.Price, Quantity = 0 });
             }
+
+            if (Rows.Count == 0)
+            {
+                await DisplayAlert("Info", "Er zijn geen actieve producten beschikbaar. Voeg eerst producten toe op de pagina Producten.", "OK");
+            }
         }
         catch (Exception ex)
         {

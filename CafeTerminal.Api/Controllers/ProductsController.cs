@@ -28,6 +28,9 @@ public class ProductsController : ControllerBase
         if (dto == null)
             return BadRequest();
 
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
         var created = await _productService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetAll), new { id = created?.Id }, created);
     }

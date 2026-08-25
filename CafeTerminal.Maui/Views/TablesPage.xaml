@@ -65,7 +65,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
+        
         <!-- Content area for selected tab -->
         <ContentView Grid.Row="3" Padding="12">
             <Label Text="{Binding SelectedTab.Title, FallbackValue='Kies een tafel'}" FontSize="20" HorizontalOptions="Center" VerticalOptions="Start" />

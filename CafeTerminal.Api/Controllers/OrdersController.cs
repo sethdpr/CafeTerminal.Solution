@@ -20,6 +20,9 @@ public class OrdersController : ControllerBase
     {
         if (request == null) return BadRequest();
 
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
         var created = await _orderService.CreateAsync(request);
         return CreatedAtAction(nameof(GetForTable), new { tableNumber = created.TableNumber }, created);
     }

@@ -62,6 +62,12 @@ public partial class ProductsPage : ContentPage
             return;
         }
 
+        if (price <= 0)
+        {
+            await DisplayAlert("Fout", "Geef een prijs groter dan 0 op.", "OK");
+            return;
+        }
+
         try
         {
             var created = await _apiService.CreateProductAsync(name, price);

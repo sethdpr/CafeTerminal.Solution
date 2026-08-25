@@ -24,6 +24,11 @@ namespace CafeTerminal.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequest registerRequest) //this endpoint uses the RegisterRequest DTO. The Api validates the request input and saves it to the database
         {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var user = new ApplicationUser
             {
                 UserName = registerRequest.Username,
@@ -50,6 +55,11 @@ namespace CafeTerminal.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest) //this endpoint uses the LoginRequest DTO. The Api validates the request input and checks the credentials
         {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var user = await _userManager.FindByNameAsync(loginRequest.Username); //find the user by username
 
             if (user == null)

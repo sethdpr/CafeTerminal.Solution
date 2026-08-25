@@ -1,5 +1,7 @@
 using CafeTerminal.Shared.DTOs;
+using CafeTerminal.Shared.DTOs;
 using System.Text.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace CafeTerminal.Maui.Views;
 
@@ -25,6 +27,12 @@ public partial class RegisterPage : ContentPage
                 string.IsNullOrWhiteSpace(password))
             {
                 await DisplayAlert("Fout", "Gelieve alle velden in te vullen", "OK");
+                return;
+            }
+
+            if (!new EmailAddressAttribute().IsValid(email))
+            {
+                await DisplayAlert("Fout", "Vul een geldig e-mailadres in.", "OK");
                 return;
             }
 
@@ -104,9 +112,10 @@ public partial class RegisterPage : ContentPage
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
+                var errorMessage = ExtractRegisterErrorMessage(error);
                 await DisplayAlert(
                     "Fout",
-                    $"Registratie mislukt: {error}",
+                    $"Registratie mislukt: {errorMessage}",
                     "OK");
             }
         }
@@ -117,5 +126,31 @@ public partial class RegisterPage : ContentPage
                 $"Registratie mislukt: {ex.Message}",
                 "OK");
         }
+    }
+
+    private static string ExtractRegisterErrorMessage(string error)
+    {
+        try
+        {
+            var identityErrors = JsonSerializer.Deserialize<List<IdentityErrorResponse>>(error, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (identityErrors != null && identityErrors.Count > 0)
+            {
+                return string.Join(Environment.NewLine, identityErrors.Select(e => e.Description));
+            }
+        }
+        catch
+        {
+        }
+
+        return error;
+    }
+
+    private class IdentityErrorResponse
+    {
+        public string Description { get; set; } = string.Empty;
     }
 }

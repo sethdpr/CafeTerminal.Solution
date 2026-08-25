@@ -122,7 +122,7 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
         var tab = new TabItem
         {
             TableNumber = tableNumber,
-            Title = $"Table {tableNumber}"
+            Title = $"Tafel {tableNumber}"
         };
 
         Tabs.Add(tab);

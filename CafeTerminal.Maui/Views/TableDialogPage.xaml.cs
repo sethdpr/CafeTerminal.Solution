@@ -22,7 +22,7 @@ public partial class TableDialogPage : ContentPage
         var services = Application.Current?.Handler?.MauiContext?.Services;
         _apiService = services?.GetService<ApiService>();
 
-        TitleLabel.Text = $"Table {_table.Number}";
+        TitleLabel.Text = $"Tafel {_table.Number}";
 
         if (!string.IsNullOrWhiteSpace(_table.Name))
         {
