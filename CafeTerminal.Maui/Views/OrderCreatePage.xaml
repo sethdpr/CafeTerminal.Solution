@@ -6,7 +6,7 @@
     Title="Nieuwe bestelling">
 
     <VerticalStackLayout Padding="12" Spacing="8">
-        <Label Text="Select products and quantities" FontSize="18" />
+        <Label Text="Selecteer producten" FontSize="18" />
 
         <CollectionView x:Name="ProductsList" SelectionMode="None">
             <CollectionView.ItemTemplate>
@@ -24,8 +24,8 @@
         </CollectionView>
 
         <HorizontalStackLayout Spacing="8">
-            <Button Text="Save order" Clicked="OnSaveOrderClicked" />
-            <Button Text="Cancel" Clicked="OnCancelClicked" />
+            <Button Text="Bestelling opslaan" Clicked="OnSaveOrderClicked" />
+            <Button Text="Annuleer" Clicked="OnCancelClicked" />
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

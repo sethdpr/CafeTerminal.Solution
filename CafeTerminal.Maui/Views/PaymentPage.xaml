@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CafeTerminal.Maui.Views.PaymentPage"
+
+    <Grid Padding="16" RowDefinitions="Auto,*,Auto,Auto">
+        <Label Grid.Row="0" x:Name="TitleLabel" Text="Betaling" FontSize="22" FontAttributes="Bold" />
+
+        <CollectionView Grid.Row="1" x:Name="OrdersCollection" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="4" HasShadow="False" BorderColor="LightGray">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{Binding CreatedAt, StringFormat='Bestelling van {0:dd/MM/yyyy HH:mm}'}" FontAttributes="Bold" />
+                            <CollectionView ItemsSource="{Binding Items}" SelectionMode="None" HeightRequest="120">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label Text="{Binding ProductName}" WidthRequest="140" />
+                                            <Label Text="{Binding Quantity, StringFormat='x {0}'}" WidthRequest="40" />
+                                            <Label Text="{Binding UnitPrice, StringFormat='{0:F2} EUR'}" />
+                                        </HorizontalStackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <Label Text="{Binding TotalPrice, StringFormat='Totaal bestelling: {0:F2} EUR'}" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Grid.Row="2" x:Name="GrandTotalLabel" Text="Totaal: 0.00 EUR" FontSize="20" FontAttributes="Bold" />
+
+        <HorizontalStackLayout Grid.Row="3" Spacing="8">
+            <Button Text="Betaling afronden" Clicked="OnPaymentCompleteClicked" />
+            <Button Text="Annuleer" Clicked="OnCloseClicked" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

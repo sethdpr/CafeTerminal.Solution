@@ -94,8 +94,8 @@ public partial class TableDialogPage : ContentPage
 
     private async void OnPaymentClicked(object sender, EventArgs e)
     {
-        // Placeholder - will call API or navigate to payment page later
-        await DisplayAlert("Info", "Betaling - nog niet geïmplementeerd", "OK");
+        var paymentPage = new PaymentPage(_table.Number);
+        await Navigation.PushAsync(paymentPage);
     }
 
     private async void OnCloseClicked(object sender, EventArgs e)

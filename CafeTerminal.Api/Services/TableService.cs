@@ -75,4 +75,15 @@ END";
         await _db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> ClearNameAsync(int number)
+    {
+        var table = await _db.Tables.FirstOrDefaultAsync(t => t.Number == number);
+        if (table == null)
+            return false;
+
+        table.Name = string.Empty;
+        await _db.SaveChangesAsync();
+        return true;
+    }
 }

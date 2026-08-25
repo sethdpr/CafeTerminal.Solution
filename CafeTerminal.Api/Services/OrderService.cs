@@ -102,7 +102,7 @@ END";
     public async Task<List<OrderDto>> GetOrdersForTableAsync(int tableNumber)
     {
         var orders = await _db.Orders
-            .Where(o => o.TableNumber == tableNumber)
+            .Where(o => o.TableNumber == tableNumber && o.PaymentDate == null)
             .Include(o => o.Items)
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync();
@@ -122,5 +122,56 @@ END";
                 UnitPrice = oi.UnitPrice
             }).ToList()
         }).ToList();
+    }
+
+    public async Task<PaymentSummaryDto> GetPaymentSummaryAsync(int tableNumber)
+    {
+        var table = await _db.Tables.FirstOrDefaultAsync(t => t.Number == tableNumber);
+
+        var orders = await GetOrdersForTableAsync(tableNumber);
+
+        return new PaymentSummaryDto
+        {
+            TableNumber = tableNumber,
+            TableName = table?.Name ?? string.Empty,
+            Orders = orders,
+            TotalPrice = orders.Sum(o => o.TotalPrice)
+        };
+    }
+
+    public async Task<bool> CompletePaymentAsync(int tableNumber)
+    {
+        var orders = await _db.Orders
+            .Where(o => o.TableNumber == tableNumber && o.PaymentDate == null)
+            .ToListAsync();
+
+        if (orders.Count == 0)
+        {
+            var existingTable = await _db.Tables.FirstOrDefaultAsync(t => t.Number == tableNumber);
+            if (existingTable == null)
+            {
+                return false;
+            }
+
+            existingTable.Name = string.Empty;
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        var paymentDate = DateTime.UtcNow;
+        foreach (var order in orders)
+        {
+            order.PaymentDate = paymentDate;
+        }
+
+        var table = await _db.Tables.FirstOrDefaultAsync(t => t.Number == tableNumber);
+        if (table == null)
+        {
+            return false;
+        }
+
+        table.Name = string.Empty;
+        await _db.SaveChangesAsync();
+        return true;
     }
 }

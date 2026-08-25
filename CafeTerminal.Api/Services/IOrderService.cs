@@ -7,4 +7,6 @@ public interface IOrderService
     Task<OrderDto> CreateAsync(CreateOrderRequest request);
     Task<List<OrderDto>> GetOrdersForTableAsync(int tableNumber);
     Task InitializeAsync();
+    Task<PaymentSummaryDto> GetPaymentSummaryAsync(int tableNumber);
+    Task<bool> CompletePaymentAsync(int tableNumber);
 }

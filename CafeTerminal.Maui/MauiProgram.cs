@@ -34,7 +34,6 @@ public static class MauiProgram
         // Services
         builder.Services.AddSingleton<ApiService>();
         builder.Services.AddSingleton<AuthService>();
-        builder.Services.AddSingleton<OrderCreatePage>();
 
         // Pages
         builder.Services.AddSingleton<LoginPage>();
@@ -42,6 +41,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<TablesPage>();
         builder.Services.AddSingleton<ProductsPage>();
         builder.Services.AddSingleton<OrderCreatePage>();
+        builder.Services.AddSingleton<PaymentPage>();
 
         return builder.Build();
     }

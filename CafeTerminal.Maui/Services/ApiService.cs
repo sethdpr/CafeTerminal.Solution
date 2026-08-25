@@ -114,5 +114,27 @@ namespace CafeTerminal.Maui.Services
             var list = JsonSerializer.Deserialize<List<OrderDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<OrderDto>();
             return list;
         }
+
+        public async Task<PaymentSummaryDto?> GetPaymentSummaryAsync(int tableNumber)
+        {
+            await AttachAuthHeaderAsync();
+
+            var resp = await _httpClient.GetAsync($"/api/orders/table/{tableNumber}/payment-summary");
+            if (!resp.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var json = await resp.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<PaymentSummaryDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
+        public async Task<bool> CompletePaymentAsync(int tableNumber)
+        {
+            await AttachAuthHeaderAsync();
+
+            var resp = await _httpClient.PostAsync($"/api/orders/table/{tableNumber}/complete-payment", null);
+            return resp.IsSuccessStatusCode;
+        }
     }
 }

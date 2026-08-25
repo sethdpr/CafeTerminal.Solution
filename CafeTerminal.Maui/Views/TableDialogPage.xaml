@@ -3,17 +3,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CafeTerminal.Maui.Views.TableDialogPage"
-    Title="Table">
 
     <VerticalStackLayout Padding="20" Spacing="12">
-        <Label x:Name="TitleLabel" Text="Table" FontSize="20" HorizontalOptions="Center" />
+        <Label x:Name="TitleLabel" Text="Tafelbeheer" FontSize="20" HorizontalOptions="Center" />
 
-        <Entry x:Name="NameEntry" Placeholder="Table name" />
-        <Button x:Name="SaveButton" Text="Save" Clicked="OnSaveClicked" />
+        <Entry x:Name="NameEntry" Placeholder="Naam tafel" />
+        <Button x:Name="SaveButton" Text="Opslaan" Clicked="OnSaveClicked" />
         <Button x:Name="AddOrderButton" Text="Voeg bestelling toe" Clicked="OnAddOrderClicked" IsVisible="False" />
         <Button x:Name="PaymentButton" Text="Betaling" Clicked="OnPaymentClicked" IsVisible="False" />
 
-        <Button Text="Close" Clicked="OnCloseClicked" />
+        <Button Text="Sluiten" Clicked="OnCloseClicked" />
     </VerticalStackLayout>
 
 </ContentPage>

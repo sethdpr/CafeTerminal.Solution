@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CafeTerminal.Maui.Views.TablesPage"
-    Title="Cafe Terminal">
+    Title="Wolfshagen (bij Rita)">
 
     <Grid Padding="12">
         <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
         <!-- Top controls -->
         <HorizontalStackLayout Grid.Row="0" HorizontalOptions="End" Spacing="12">
             <Button
-                Text="Logout"
+                Text="Afmelden"
                 Clicked="OnLogoutClicked"
                 BackgroundColor="Red"
                 TextColor="White"
@@ -68,7 +68,7 @@
 
         <!-- Content area for selected tab -->
         <ContentView Grid.Row="3" Padding="12">
-            <Label Text="{Binding SelectedTab.Title, FallbackValue='Select a table'}" FontSize="20" HorizontalOptions="Center" VerticalOptions="Start" />
+            <Label Text="{Binding SelectedTab.Title, FallbackValue='Kies een tafel'}" FontSize="20" HorizontalOptions="Center" VerticalOptions="Start" />
         </ContentView>
     </Grid>
 
