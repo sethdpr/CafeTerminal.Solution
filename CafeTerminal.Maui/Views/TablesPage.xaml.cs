@@ -21,7 +21,7 @@ public partial class TablesPage : ContentPage
 
         // Resolve services from MAUI DI (if available)
         var services = Application.Current?.Handler?.MauiContext?.Services;
-        _apiService = services?.GetService<ApiService>() ?? new ApiService(new HttpClient { BaseAddress = new Uri("https://localhost:7232") });
+        _apiService = services?.GetService<ApiService>() ?? new ApiService(ApiService.CreateFallbackHttpClient());
         _auth_service = services?.GetService<AuthService>() ?? new AuthService();
 
         BindingContext = this;

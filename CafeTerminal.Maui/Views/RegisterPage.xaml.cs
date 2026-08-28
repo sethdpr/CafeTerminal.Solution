@@ -2,6 +2,7 @@ using CafeTerminal.Shared.DTOs;
 using CafeTerminal.Shared.DTOs;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CafeTerminal.Maui.Views;
 
@@ -55,71 +56,95 @@ public partial class RegisterPage : ContentPage
                 "application/json");
 
             //send POST to API
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7232");
+            var services = Application.Current?.Handler?.MauiContext?.Services;
+            var client = services?.GetService<HttpClient>();
+            var disposeClient = false;
 
-            var response = await client.PostAsync(
-                "/api/Auth/register",
-                content);
-
-            if (response.IsSuccessStatusCode)
+            if (client == null)
             {
-                //read the response from the API
-                var responseJson = await response.Content.ReadAsStringAsync();
-
-                //convert the JSON response into an AuthResponse object
-                var authResponse =
-                    JsonSerializer.Deserialize<AuthResponse>(
-                        responseJson,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-
-                if (authResponse == null || string.IsNullOrWhiteSpace(authResponse.Token))
+                client = new HttpClient
                 {
+#if ANDROID
+                    BaseAddress = new Uri("http://10.0.2.2:5006/")
+#else
+                    BaseAddress = new Uri("https://localhost:7232/")
+#endif
+                };
+                disposeClient = true;
+            }
+
+            try
+            {
+                var response = await client.PostAsync(
+                    "/api/Auth/register",
+                    content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    //read the response from the API
+                    var responseJson = await response.Content.ReadAsStringAsync();
+
+                    //convert the JSON response into an AuthResponse object
+                    var authResponse =
+                        JsonSerializer.Deserialize<AuthResponse>(
+                            responseJson,
+                            new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                    if (authResponse == null || string.IsNullOrWhiteSpace(authResponse.Token))
+                    {
+                        await DisplayAlert(
+                            "Fout",
+                            "De registratie is gelukt, maar er werd geen JWT-token ontvangen.",
+                            "OK");
+
+                        return;
+                    }
+
+                    //store the JWT token securely on the device
+                    await SecureStorage.Default.SetAsync(
+                        "auth_token",
+                        authResponse.Token);
+
                     await DisplayAlert(
-                        "Fout",
-                        "De registratie is gelukt, maar er werd geen JWT-token ontvangen.",
+                        "Succes",
+                        "Gebruiker succesvol geregistreerd",
                         "OK");
 
-                    return;
-                }
+                    // Rebuild the shell items for the logged-in state before navigating
+                    if (Shell.Current is AppShell appShell)
+                    {
+                        await appShell.ShowLoggedInAndNavigateToTablesAsync();
+                    }
+                    else
+                    {
+                        await Shell.Current.GoToAsync("///tables");
+                    }
 
-                //store the JWT token securely on the device
-                await SecureStorage.Default.SetAsync(
-                    "auth_token",
-                    authResponse.Token);
-
-                await DisplayAlert(
-                    "Succes",
-                    "Gebruiker succesvol geregistreerd",
-                    "OK");
-
-                // Rebuild the shell items for the logged-in state before navigating
-                if (Shell.Current is AppShell appShell)
-                {
-                    await appShell.ShowLoggedInAndNavigateToTablesAsync();
+                    /*We use "///" to navigate between Shell-elements.
+                     This is called 'absolute routing'. Different from 'relative routing'.
+                     Relative routing can be described as taking stairs to navigate through the app.
+                     With absolute routing, we can teleport between different "rooms" in the app.
+                     Like going from "/Home/Menu" to "/Account/Settings" in 1 move, for example*/
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("///tables");
+                    var error = await response.Content.ReadAsStringAsync();
+                    var errorMessage = ExtractRegisterErrorMessage(error);
+                    await DisplayAlert(
+                        "Fout",
+                        $"Registratie mislukt: {errorMessage}",
+                        "OK");
                 }
-
-                /*We use "///" to navigate between Shell-elements.
-                 This is called 'absolute routing'. Different from 'relative routing'.
-                 Relative routing can be described as taking stairs to navigate through the app.
-                 With absolute routing, we can teleport between different "rooms" in the app.
-                 Like going from "/Home/Menu" to "/Account/Settings" in 1 move, for example*/
             }
-            else
+            finally
             {
-                var error = await response.Content.ReadAsStringAsync();
-                var errorMessage = ExtractRegisterErrorMessage(error);
-                await DisplayAlert(
-                    "Fout",
-                    $"Registratie mislukt: {errorMessage}",
-                    "OK");
+                if (disposeClient)
+                {
+                    client.Dispose();
+                }
             }
         }
         catch (Exception ex)

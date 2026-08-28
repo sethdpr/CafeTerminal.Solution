@@ -25,7 +25,7 @@ public partial class OrderCreatePage : ContentPage
         _tableNumber = tableNumber;
 
         var services = Application.Current?.Handler?.MauiContext?.Services;
-        _apiService = services?.GetService<ApiService>() ?? new ApiService(new HttpClient { BaseAddress = new Uri("https://localhost:7232") });
+        _apiService = services?.GetService<ApiService>() ?? new ApiService(ApiService.CreateFallbackHttpClient());
 
         ProductsList.ItemsSource = Rows;
     }

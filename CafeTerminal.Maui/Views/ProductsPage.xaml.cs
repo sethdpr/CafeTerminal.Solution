@@ -21,7 +21,7 @@ public partial class ProductsPage : ContentPage
 
         var services = Application.Current?.Handler?.MauiContext?.Services;
         // Resolve ApiService from DI if available; otherwise fall back to a default instance
-        _apiService = services?.GetService<ApiService>() ?? new ApiService(new HttpClient { BaseAddress = new Uri("https://localhost:7232") });
+        _apiService = services?.GetService<ApiService>() ?? new ApiService(ApiService.CreateFallbackHttpClient());
 
         BindingContext = this;
     }

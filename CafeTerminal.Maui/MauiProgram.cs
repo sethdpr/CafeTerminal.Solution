@@ -18,8 +18,10 @@ public static class MauiProgram
             });
 
 #if ANDROID
-        // Android emulator kan localhost niet direct bereiken
-        var apiBase = "https://10.0.2.2:7232/";
+        // Android emulator uses the host machine through 10.0.2.2.
+        // Use HTTP in development because the local HTTPS certificate is for localhost,
+        // not for 10.0.2.2.
+        var apiBase = "http://10.0.2.2:5006/";
 #else
         // Windows en Mac kunnen localhost rechtstreeks gebruiken
         var apiBase = "https://localhost:7232/";

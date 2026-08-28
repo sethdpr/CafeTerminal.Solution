@@ -21,7 +21,7 @@ public partial class TableDialogPage : ContentPage
         _table = table;
         // Resolve ApiService from MAUI DI
         var services = Application.Current?.Handler?.MauiContext?.Services;
-        _apiService = services?.GetService<ApiService>();
+        _apiService = services?.GetService<ApiService>() ?? new ApiService(ApiService.CreateFallbackHttpClient());
 
         TitleLabel.Text = $"Tafel {_table.Number}";
 

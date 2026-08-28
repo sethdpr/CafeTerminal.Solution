@@ -1,49 +1,83 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CafeTerminal.Maui.Views.TablesPage"
     Title="Wolfshagen (bij Rita)">
 
-    <!-- This page shows the available cafe tables and allows opening a table dialog. -->
-    <Grid Padding="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid
+        Padding="12"
+        RowDefinitions="Auto,*">
 
         <!-- Top controls -->
-        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="End" Spacing="12">
+        <HorizontalStackLayout
+            Grid.Row="0"
+            HorizontalOptions="End"
+            Spacing="12"
+            Margin="0,0,0,12">
+
             <Button
                 Text="Afmelden"
                 Clicked="OnLogoutClicked"
                 BackgroundColor="Red"
                 TextColor="White"
                 WidthRequest="100" />
+
         </HorizontalStackLayout>
 
         <!-- Table selection -->
         <CollectionView
+            x:Name="TablesCollectionView"
             Grid.Row="1"
             ItemsSource="{Binding TableItems}"
-            HeightRequest="120"
             SelectionMode="None"
-            HorizontalOptions="Center">
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="16" />
+                <GridItemsLayout
+                    x:Name="TablesLayout"
+                    Orientation="Vertical"
+                    Span="3"
+                    HorizontalItemSpacing="8"
+                    VerticalItemSpacing="8" />
             </CollectionView.ItemsLayout>
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Padding="0" Margin="8" CornerRadius="8" HasShadow="False" BackgroundColor="Transparent" HorizontalOptions="Center">
+
+                    <Frame
+                        Padding="0"
+                        Margin="4"
+                        CornerRadius="8"
+                        HasShadow="False"
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Start">
+
                         <Frame.GestureRecognizers>
-                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnTableTapped" />
+                            <TapGestureRecognizer
+                                NumberOfTapsRequired="1"
+                                Tapped="OnTableTapped" />
                         </Frame.GestureRecognizers>
-                        <Label Text="{Binding DisplayText}" HorizontalOptions="Center" VerticalOptions="Center" FontSize="16" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" WidthRequest="90" HeightRequest="64" />
+
+                        <Label
+                            Text="{Binding DisplayText}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center"
+                            FontSize="16"
+                            HeightRequest="64" />
+
                     </Frame>
+
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
         </CollectionView>
+
     </Grid>
 
 </ContentPage>

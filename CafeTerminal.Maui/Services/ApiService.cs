@@ -12,6 +12,18 @@ namespace CafeTerminal.Maui.Services
     {
         private readonly HttpClient _httpClient;
 
+        public static HttpClient CreateFallbackHttpClient()
+        {
+            return new HttpClient
+            {
+#if ANDROID
+                BaseAddress = new Uri("http://10.0.2.2:5006/")
+#else
+                BaseAddress = new Uri("https://localhost:7232/")
+#endif
+            };
+        }
+
         public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;

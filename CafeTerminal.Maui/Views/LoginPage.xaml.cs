@@ -1,6 +1,7 @@
 using CafeTerminal.Shared.DTOs;
 using System.Text.Json;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CafeTerminal.Maui.Views;
 
@@ -45,60 +46,82 @@ public partial class LoginPage : ContentPage
 
         try
         {
-            using var client = new HttpClient
+            var services = Application.Current?.Handler?.MauiContext?.Services;
+            var client = services?.GetService<HttpClient>();
+            var disposeClient = false;
+
+            if (client == null)
             {
-                BaseAddress = new Uri("https://localhost:7232") //Set the base address of the HttpClient to the API's URL
-            };
+                client = new HttpClient
+                {
+#if ANDROID
+                    BaseAddress = new Uri("http://10.0.2.2:5006/")
+#else
+                    BaseAddress = new Uri("https://localhost:7232/")
+#endif
+                };
+                disposeClient = true;
+            }
 
-            var response = await client.PostAsync(
-                "/api/Auth/login",
-                content); //Send a POST request to the API's login endpoint with the JSON content
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                //read the response from the API
-                var responseJson = await response.Content.ReadAsStringAsync();
+                var response = await client.PostAsync(
+                    "/api/Auth/login",
+                    content); //Send a POST request to the API's login endpoint with the JSON content
 
-                //convert the JSON response into an AuthResponse object
-                var authResponse =
-                    JsonSerializer.Deserialize<AuthResponse>(
-                        responseJson,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-
-                if (authResponse == null || string.IsNullOrWhiteSpace(authResponse.Token))
+                if (response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert(
-                        "Fout",
-                        "De login is gelukt, maar er werd geen JWT-token ontvangen.",
-                        "OK");
+                    //read the response from the API
+                    var responseJson = await response.Content.ReadAsStringAsync();
 
-                    return;
-                }
+                    //convert the JSON response into an AuthResponse object
+                    var authResponse =
+                        JsonSerializer.Deserialize<AuthResponse>(
+                            responseJson,
+                            new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
 
-                //store the JWT token securely on the device
-                await SecureStorage.Default.SetAsync(
-                    "auth_token",
-                    authResponse.Token);
+                    if (authResponse == null || string.IsNullOrWhiteSpace(authResponse.Token))
+                    {
+                        await DisplayAlert(
+                            "Fout",
+                            "De login is gelukt, maar er werd geen JWT-token ontvangen.",
+                            "OK");
 
-                // Rebuild the shell items for the logged-in state before navigating
-                if (Shell.Current is AppShell appShell)
-                {
-                    await appShell.ShowLoggedInAndNavigateToTablesAsync();
+                        return;
+                    }
+
+                    //store the JWT token securely on the device
+                    await SecureStorage.Default.SetAsync(
+                        "auth_token",
+                        authResponse.Token);
+
+                    // Rebuild the shell items for the logged-in state before navigating
+                    if (Shell.Current is AppShell appShell)
+                    {
+                        await appShell.ShowLoggedInAndNavigateToTablesAsync();
+                    }
+                    else
+                    {
+                        await Shell.Current.GoToAsync("///tables");
+                    }
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("///tables");
+                    await DisplayAlert(
+                        "Login mislukt",
+                        "Ongeldige gebruikersnaam of wachtwoord.",
+                        "OK");
                 }
             }
-            else
+            finally
             {
-                await DisplayAlert(
-                    "Login mislukt",
-                    "Ongeldige gebruikersnaam of wachtwoord.",
-                    "OK");
+                if (disposeClient)
+                {
+                    client.Dispose();
+                }
             }
         }
         catch (Exception ex)
