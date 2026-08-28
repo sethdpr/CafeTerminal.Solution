@@ -1,33 +1,17 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Linq;
 using Microsoft.Maui.Controls;
 using CafeTerminal.Maui.Services;
 
 namespace CafeTerminal.Maui.Views;
 
-public partial class TablesPage : ContentPage, INotifyPropertyChanged
+// This page shows the table overview and opens the management dialog for one table.
+public partial class TablesPage : ContentPage
 {
     private readonly ApiService _apiService;
     private readonly AuthService _auth_service;
     private bool _isTableDialogOpen;
-
-    public ObservableCollection<TabItem> Tabs { get; } = new();
-
-    private TabItem? _selectedTab;
-    public TabItem? SelectedTab
-    {
-        get => _selectedTab;
-        set
-        {
-            if (_selectedTab != value)
-            {
-                _selectedTab = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
     public ObservableCollection<TableItem> TableItems { get; } = new(Enumerable.Range(1, 10).Select(i => new TableItem { Number = i }));
 
@@ -46,6 +30,7 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
     // Track last tap timestamps per table to detect double-clicks
     private readonly Dictionary<int, DateTime> _lastTapTimes = new();
 
+    // Logs the user out and returns to the login shell.
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
         await _auth_service.LogoutAsync();
@@ -61,7 +46,7 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    // Single-tap handler with double-click detection: open the table dialog on double-click
+    // Detects a double tap on a table tile and opens the table dialog.
     private async void OnTableTapped(object? sender, TappedEventArgs e)
     {
         if (sender is VisualElement ve && ve.BindingContext is TableItem ti)
@@ -88,47 +73,7 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    // Select a tab when its title is clicked
-    private void OnTabClicked(object sender, EventArgs e)
-    {
-        if (sender is Button btn && btn.CommandParameter is TabItem tab)
-        {
-            SelectedTab = tab;
-        }
-    }
-
-    // Close tab
-    private void OnCloseTabClicked(object sender, EventArgs e)
-    {
-        if (sender is Button btn && btn.CommandParameter is TabItem tab)
-        {
-            Tabs.Remove(tab);
-            if (SelectedTab == tab)
-            {
-                SelectedTab = Tabs.LastOrDefault();
-            }
-        }
-    }
-
-    private void OpenTab(int tableNumber)
-    {
-        var existing = Tabs.FirstOrDefault(t => t.TableNumber == tableNumber);
-        if (existing != null)
-        {
-            SelectedTab = existing;
-            return;
-        }
-
-        var tab = new TabItem
-        {
-            TableNumber = tableNumber,
-            Title = $"Tafel {tableNumber}"
-        };
-
-        Tabs.Add(tab);
-        SelectedTab = tab;
-    }
-
+    // Reloads the tables from the API whenever the page becomes visible.
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -154,19 +99,7 @@ public partial class TablesPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
-
-    public class TabItem
-    {
-        public int TableNumber { get; set; }
-        public string Title { get; set; } = string.Empty;
-    }
-
+    // This helper model represents one tile in the tables overview.
     public class TableItem : INotifyPropertyChanged
     {
         private string _name = string.Empty;

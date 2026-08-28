@@ -74,7 +74,12 @@ namespace CafeTerminal.Maui.Services
 
             var resp = await _httpClient.PostAsync("/api/products", content);
             if (!resp.IsSuccessStatusCode)
-                return null;
+            {
+                var error = await resp.Content.ReadAsStringAsync();
+                throw new InvalidOperationException(string.IsNullOrWhiteSpace(error)
+                    ? "De API kon het product niet aanmaken."
+                    : error);
+            }
 
             var responseJson = await resp.Content.ReadAsStringAsync();
             var created = JsonSerializer.Deserialize<ProductDto>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });

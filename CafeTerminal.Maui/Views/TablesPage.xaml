@@ -5,10 +5,9 @@
     x:Class="CafeTerminal.Maui.Views.TablesPage"
     Title="Wolfshagen (bij Rita)">
 
+    <!-- This page shows the available cafe tables and allows opening a table dialog. -->
     <Grid Padding="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -23,29 +22,9 @@
                 WidthRequest="100" />
         </HorizontalStackLayout>
 
-        <!-- Tabs -->
-        <CollectionView
-            Grid.Row="1"
-            ItemsSource="{Binding Tabs}"
-            SelectionMode="Single"
-            SelectedItem="{Binding SelectedTab, Mode=TwoWay}"
-            ItemsLayout="HorizontalList"
-            HeightRequest="48">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Padding="8" Margin="4" HasShadow="False" BorderColor="LightGray">
-                        <HorizontalStackLayout Spacing="8">
-                            <Button Text="{Binding Title}" Clicked="OnTabClicked" CommandParameter="{Binding .}" />
-                            <Button Text="x" Clicked="OnCloseTabClicked" CommandParameter="{Binding .}" />
-                        </HorizontalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
         <!-- Table selection -->
         <CollectionView
-            Grid.Row="2"
+            Grid.Row="1"
             ItemsSource="{Binding TableItems}"
             HeightRequest="120"
             SelectionMode="None"
@@ -65,11 +44,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        
-        <!-- Content area for selected tab -->
-        <ContentView Grid.Row="3" Padding="12">
-            <Label Text="{Binding SelectedTab.Title, FallbackValue='Kies een tafel'}" FontSize="20" HorizontalOptions="Center" VerticalOptions="Start" />
-        </ContentView>
     </Grid>
 
 </ContentPage>

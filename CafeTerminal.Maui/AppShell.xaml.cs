@@ -5,6 +5,7 @@ using CafeTerminal.Maui.Views;
 
 namespace CafeTerminal.Maui
 {
+    // This Shell controls the main navigation structure of the MAUI app.
     public partial class AppShell : Shell
     {
         private readonly AuthService _authService;
@@ -13,7 +14,7 @@ namespace CafeTerminal.Maui
         {
             InitializeComponent();
 
-            // Register routes so navigation works even if Shell items are modified at runtime
+            // Register routes so navigation works even when the visible shell items change.
             Routing.RegisterRoute("login", typeof(LoginPage));
             Routing.RegisterRoute("register", typeof(RegisterPage));
             Routing.RegisterRoute("tables", typeof(TablesPage));
@@ -23,11 +24,12 @@ namespace CafeTerminal.Maui
 
             Navigating += OnShellNavigating;
 
-            // Initialize menu items based on login state
+            // Show the correct menu items for the current login state.
             _ = UpdateShellItemsAsync();
         }
 
-        private async void OnShellNavigating( //The app checks if the user is logged in when navigating to the main page. If not, it cancels the navigation and redirects to the login page.
+        // Blocks navigation to logged-in pages when no token is available.
+        private async void OnShellNavigating(
             object? sender,
             ShellNavigatingEventArgs args)
         {
@@ -44,9 +46,7 @@ namespace CafeTerminal.Maui
             }
         }
 
-        // Removed automatic refresh on every navigation to avoid resetting the current page.
-        // Shell items are refreshed explicitly after login/logout via the helper methods.
-
+        // Rebuilds the shell menu so only the pages for the current login state are visible.
         private async Task UpdateShellItemsAsync()
         {
             var isLoggedIn = await _authService.IsLoggedInAsync();
@@ -69,7 +69,7 @@ namespace CafeTerminal.Maui
             });
         }
 
-        // Public helper to refresh shell items and navigate to the login page.
+        // Refreshes the shell after logout and redirects to the login page.
         public async Task ShowLoggedOutAndNavigateToLoginAsync()
         {
             await UpdateShellItemsAsync();
@@ -78,7 +78,7 @@ namespace CafeTerminal.Maui
             await GoToAsync("///login");
         }
 
-        // Public helper to refresh shell items and navigate to the main page after login
+        // Refreshes the shell after login and redirects to the tables page.
         public async Task ShowLoggedInAndNavigateToTablesAsync()
         {
             await UpdateShellItemsAsync();
@@ -87,7 +87,7 @@ namespace CafeTerminal.Maui
             await GoToAsync("///tables");
         }
 
-        // Public helper to refresh shell items and navigate to the products page after login
+        // Refreshes the shell after login and redirects to the products page.
         public async Task ShowLoggedInAndNavigateToProductsAsync()
         {
             await UpdateShellItemsAsync();

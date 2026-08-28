@@ -3,12 +3,14 @@ using CafeTerminal.Maui.Views;
 
 namespace CafeTerminal.Maui
 {
+    // This is the root MAUI application class.
     public partial class App : Application
     {
         public App()
         {
             InitializeComponent();
-            MainPage = new AppShell(); //set the main page to AppShell wich automatically shows the first ShellContent: LoginPage
+            // Start the app inside the Shell so page navigation is centralized.
+            MainPage = new AppShell();
         }
     }
 }

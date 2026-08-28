@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CafeTerminal.Maui.Views;
 
+// This page creates one new order for a specific table.
 public partial class OrderCreatePage : ContentPage
 {
     private readonly ApiService _apiService;
@@ -29,6 +30,7 @@ public partial class OrderCreatePage : ContentPage
         ProductsList.ItemsSource = Rows;
     }
 
+    // Loads all active products from the API when the page becomes visible.
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -53,6 +55,7 @@ public partial class OrderCreatePage : ContentPage
         }
     }
 
+    // Sends the selected products and quantities to the API to create an order.
     private async void OnSaveOrderClicked(object sender, EventArgs e)
     {
         var items = Rows.Where(r => r.Quantity > 0)
@@ -85,11 +88,13 @@ public partial class OrderCreatePage : ContentPage
         }
     }
 
+    // Closes the page without creating an order.
     private async void OnCancelClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
     }
 
+    // This helper view model represents one product row in the order creation UI.
     public class ProductOrderRow : INotifyPropertyChanged
     {
         public int ProductId { get; set; }

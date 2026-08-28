@@ -1,16 +1,26 @@
+using System.Collections.ObjectModel;
+using System.Globalization;
 using CafeTerminal.Maui.Services;
 using CafeTerminal.Shared.DTOs;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
 
 namespace CafeTerminal.Maui.Views;
 
+// This page shows all unpaid orders for a table and completes the payment flow.
 public partial class PaymentPage : ContentPage
 {
     private readonly ApiService _apiService;
     private readonly int _tableNumber;
+    private static readonly TimeZoneInfo BelgianTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
+#if WINDOWS
+        "Romance Standard Time"
+#else
+        "Europe/Brussels"
+#endif
+    );
+    private static readonly CultureInfo BelgianCulture = new("nl-BE");
 
-    public ObservableCollection<OrderDto> Orders { get; } = new();
+    public ObservableCollection<PaymentOrderViewModel> Orders { get; } = new();
 
     public PaymentPage(int tableNumber)
     {
@@ -23,12 +33,14 @@ public partial class PaymentPage : ContentPage
         OrdersCollection.ItemsSource = Orders;
     }
 
+    // Loads the latest payment summary whenever the page becomes visible.
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         await LoadSummaryAsync();
     }
 
+    // Retrieves the payment summary from the API and updates the UI.
     private async Task LoadSummaryAsync()
     {
         try
@@ -47,7 +59,7 @@ public partial class PaymentPage : ContentPage
             Orders.Clear();
             foreach (var order in summary.Orders)
             {
-                Orders.Add(order);
+                Orders.Add(new PaymentOrderViewModel(order));
             }
 
             GrandTotalLabel.Text = $"Totaal: {summary.TotalPrice:F2} EUR";
@@ -58,6 +70,7 @@ public partial class PaymentPage : ContentPage
         }
     }
 
+    // Completes the payment for the current table through the API.
     private async void OnPaymentCompleteClicked(object sender, EventArgs e)
     {
         var confirm = await DisplayAlert("Bevestig", "Betaling afronden voor deze tafel?", "Ja", "Nee");
@@ -85,8 +98,36 @@ public partial class PaymentPage : ContentPage
         }
     }
 
+    // Closes the payment page without completing payment.
     private async void OnCloseClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
+    }
+
+    // This helper view model prepares order data for the payment overview UI.
+    public class PaymentOrderViewModel
+    {
+        public PaymentOrderViewModel(OrderDto order)
+        {
+            CreatedAtText = $"Bestelling van {FormatBelgianDateTime(order.CreatedAt)}";
+            Items = order.Items;
+            TotalPrice = order.TotalPrice;
+        }
+
+        public string CreatedAtText { get; }
+        public List<OrderItemDto> Items { get; }
+        public decimal TotalPrice { get; }
+    }
+
+    // Converts a UTC timestamp to Belgian local time for display in the app.
+    private static string FormatBelgianDateTime(DateTime dateTime)
+    {
+        if (dateTime.Kind == DateTimeKind.Unspecified)
+        {
+            dateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+        }
+
+        var belgianTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime.ToUniversalTime(), BelgianTimeZone);
+        return belgianTime.ToString("dd/MM/yyyy HH:mm", BelgianCulture);
     }
 }

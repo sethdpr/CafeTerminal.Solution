@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CafeTerminal.Maui.Views;
 
+// This dialog manages one selected table and its next actions.
 public partial class TableDialogPage : ContentPage
 {
     private readonly TablesPage.TableItem _table;
@@ -40,6 +41,7 @@ public partial class TableDialogPage : ContentPage
         _isOrderPageOpen = false;
     }
 
+    // Saves the entered table name through the API.
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         var name = NameEntry.Text?.Trim() ?? string.Empty;
@@ -61,7 +63,7 @@ public partial class TableDialogPage : ContentPage
             if (success)
             {
                 _table.Name = name;
-                await DisplayAlert("Succes", "Tabelnaam opgeslagen", "OK");
+                await DisplayAlert("Succes", "Tafelnaam opgeslagen", "OK");
                 await Navigation.PopModalAsync();
             }
             else
@@ -75,6 +77,7 @@ public partial class TableDialogPage : ContentPage
         }
     }
 
+    // Opens the order creation page for this table.
     private async void OnAddOrderClicked(object sender, EventArgs e)
     {
         if (_isOrderPageOpen || Navigation.NavigationStack.LastOrDefault() is OrderCreatePage)
@@ -92,12 +95,14 @@ public partial class TableDialogPage : ContentPage
         // The guard is reset in OnAppearing.
     }
 
+    // Opens the payment overview page for this table.
     private async void OnPaymentClicked(object sender, EventArgs e)
     {
         var paymentPage = new PaymentPage(_table.Number);
         await Navigation.PushAsync(paymentPage);
     }
 
+    // Closes the table dialog.
     private async void OnCloseClicked(object sender, EventArgs e)
     {
         await Navigation.PopModalAsync();

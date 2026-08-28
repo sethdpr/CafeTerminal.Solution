@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CafeTerminal.Api.Controllers;
 
+// This controller exposes API endpoints for creating orders, reading table orders,
+// showing payment summaries, and completing payments.
 [ApiController]
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
@@ -16,6 +18,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
+    // Creates a new order for a table based on the selected products and quantities.
     public async Task<IActionResult> Create(CreateOrderRequest request)
     {
         if (request == null) return BadRequest();
@@ -28,6 +31,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("table/{tableNumber}")]
+    // Returns the active unpaid orders for a specific table.
     public async Task<IActionResult> GetForTable(int tableNumber)
     {
         var list = await _orderService.GetOrdersForTableAsync(tableNumber);
@@ -35,6 +39,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("table/{tableNumber}/payment-summary")]
+    // Returns all unpaid orders for a table together with one combined total price.
     public async Task<IActionResult> GetPaymentSummary(int tableNumber)
     {
         var summary = await _orderService.GetPaymentSummaryAsync(tableNumber);
@@ -42,6 +47,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost("table/{tableNumber}/complete-payment")]
+    // Marks all unpaid orders for a table as paid and frees the table for the next client.
     public async Task<IActionResult> CompletePayment(int tableNumber)
     {
         var success = await _orderService.CompletePaymentAsync(tableNumber);

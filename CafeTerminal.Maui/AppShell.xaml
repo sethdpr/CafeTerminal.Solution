@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:CafeTerminal.Maui.Views"
     Shell.FlyoutBehavior="Flyout">
 
+    <!-- Logged-out pages -->
     <ShellContent
         x:Name="LoginShellContent"
         Title="Log in"
@@ -16,6 +17,8 @@
         Title="Registreer"
         Route="register"
         ContentTemplate="{DataTemplate local:RegisterPage}"/>
+
+    <!-- Logged-in pages -->
     <ShellContent
         x:Name="TablesShellContent"
         Title="Tafels"
@@ -27,6 +30,3 @@
         Route="products"
         ContentTemplate="{DataTemplate local:ProductsPage}"/>
 </Shell>
-
-
-<!--this page is the blueprint of the app. It defines the pages and navigation between them-->

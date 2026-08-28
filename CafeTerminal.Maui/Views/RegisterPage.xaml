@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CafeTerminal.Maui.Views.RegisterPage">
 
+    <!-- This page lets a new user create an account. -->
     <VerticalStackLayout Padding="30" Spacing="15">
 
         <Label Text="Registreren"

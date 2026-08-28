@@ -4,6 +4,7 @@ using System.Text;
 
 namespace CafeTerminal.Maui.Views;
 
+// This page handles the login flow for existing users.
 public partial class LoginPage : ContentPage
 {
     public LoginPage()
@@ -11,6 +12,8 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
     }
 
+    // Validates the entered credentials, calls the login API, stores the JWT,
+    // and redirects the user to the logged-in shell.
     private async void OnLoginClicked(object sender, EventArgs e)
     {
         var username = UsernameEntry.Text;
@@ -107,6 +110,7 @@ public partial class LoginPage : ContentPage
         }
     }
 
+    // Navigates from the login page to the registration page.
     private async void OnRegisterHereClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("///register"); //This line recognises the route defined in AppShell.xaml

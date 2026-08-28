@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CafeTerminal.Maui.Views;
 
+// This page manages the products that can be ordered in the app.
 public partial class ProductsPage : ContentPage
 {
     private readonly ApiService _apiService;
@@ -25,6 +26,7 @@ public partial class ProductsPage : ContentPage
         BindingContext = this;
     }
 
+    // Reloads the product list whenever the page becomes visible.
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -32,6 +34,7 @@ public partial class ProductsPage : ContentPage
         await LoadProductsAsync();
     }
 
+    // Loads the active products from the API into the collection view.
     private async Task LoadProductsAsync()
     {
         try
@@ -47,6 +50,7 @@ public partial class ProductsPage : ContentPage
         }
     }
 
+    // Validates the entered values and creates a new product through the API.
     private async void OnAddClicked(object sender, EventArgs e)
     {
         var name = NameEntry.Text?.Trim() ?? string.Empty;
@@ -88,6 +92,7 @@ public partial class ProductsPage : ContentPage
         }
     }
 
+    // Soft deletes a product after the user confirms the action.
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
         if (sender is Button btn && btn.CommandParameter is int id)

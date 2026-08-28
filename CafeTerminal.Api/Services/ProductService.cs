@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeTerminal.Api.Services;
 
+// This service contains the business logic for products.
 public class ProductService : IProductService
 {
     private readonly CafeTerminalDbContext _db;
@@ -13,6 +14,7 @@ public class ProductService : IProductService
         _db = db;
     }
 
+    // Creates the Products table and missing columns for older databases.
     public async Task InitializeAsync()
     {
         try
@@ -61,6 +63,7 @@ END
         await _db.Database.ExecuteSqlRawAsync(alterSql);
     }
 
+    // Returns all active products that were not soft deleted.
     public async Task<List<ProductDto>> GetAllAsync()
     {
         return await _db.Products
@@ -70,6 +73,7 @@ END
             .ToListAsync();
     }
 
+    // Creates a new product and sets its creation timestamp.
     public async Task<ProductDto?> CreateAsync(ProductDto dto)
     {
         var product = new Product { Name = dto.Name ?? string.Empty, Price = dto.Price, CreatedAt = DateTime.UtcNow };
@@ -80,6 +84,7 @@ END
         return dto;
     }
 
+    // Soft deletes a product by setting DeletedAt.
     public async Task<bool> DeleteAsync(int id)
     {
         var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == id);

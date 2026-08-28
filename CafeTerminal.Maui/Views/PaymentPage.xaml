@@ -5,6 +5,7 @@
     x:Class="CafeTerminal.Maui.Views.PaymentPage"
     Title="Betaling">
 
+    <!-- This page shows the payment overview for one table and allows payment completion. -->
     <Grid Padding="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -19,7 +20,7 @@
                 <DataTemplate>
                     <Frame Padding="10" Margin="4" HasShadow="False" BorderColor="LightGray">
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="{Binding CreatedAt, StringFormat='Bestelling van {0:dd/MM/yyyy HH:mm}'}" FontAttributes="Bold" />
+                            <Label Text="{Binding CreatedAtText}" FontAttributes="Bold" />
                             <CollectionView ItemsSource="{Binding Items}" SelectionMode="None" HeightRequest="120">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>

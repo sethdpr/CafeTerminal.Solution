@@ -5,6 +5,7 @@
     x:Class="CafeTerminal.Maui.Views.TableDialogPage"
     Title="Tafelbeheer">
 
+    <!-- This dialog manages one table: naming it, ordering, and payment. -->
     <VerticalStackLayout Padding="20" Spacing="12">
         <Label x:Name="TitleLabel" Text="Tafelbeheer" FontSize="20" HorizontalOptions="Center" />
 

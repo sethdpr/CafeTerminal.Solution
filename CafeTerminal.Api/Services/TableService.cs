@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeTerminal.Api.Services;
 
+// This service contains the business logic for cafe tables.
 public class TableService : ITableService
 {
     private readonly CafeTerminalDbContext _db;
@@ -13,6 +14,7 @@ public class TableService : ITableService
         _db = db;
     }
 
+    // Creates the Tables table if needed and ensures tables 1 through 10 exist.
     public async Task InitializeAsync()
     {
         // Create the table if it does not exist (handles databases created before this entity was added)
@@ -55,6 +57,7 @@ END";
         await _db.SaveChangesAsync();
     }
 
+    // Returns all tables ordered by table number.
     public async Task<List<TableDto>> GetAllAsync()
     {
         var list = await _db.Tables
@@ -65,6 +68,7 @@ END";
         return list;
     }
 
+    // Updates the name assigned to one table.
     public async Task<bool> SetNameAsync(int number, string name)
     {
         var table = await _db.Tables.FirstOrDefaultAsync(t => t.Number == number);
@@ -76,6 +80,7 @@ END";
         return true;
     }
 
+    // Clears the name of one table after payment is finished.
     public async Task<bool> ClearNameAsync(int number)
     {
         var table = await _db.Tables.FirstOrDefaultAsync(t => t.Number == number);

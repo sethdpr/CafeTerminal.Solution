@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CafeTerminal.Maui"
              x:Class="CafeTerminal.Maui.App">
+    <!-- App-level resources such as colors and styles are merged here. -->
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

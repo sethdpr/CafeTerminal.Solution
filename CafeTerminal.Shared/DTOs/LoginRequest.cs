@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace CafeTerminal.Shared.DTOs
 {
-    public class LoginRequest //this request gets sent to the API when a user wants to log in
+    // This DTO is sent to the API when a user logs in.
+    public class LoginRequest
     {
         [Required]
+        // Username entered on the login page.
         public string Username { get; set; }
         [Required]
+        // Password entered on the login page.
         public string Password { get; set; }
     }
 }

@@ -3,16 +3,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CafeTerminal.Maui.Views.ProductsPage"
-    Title="Products">
+    Title="Producten">
 
+    <!-- This page shows active products and allows creating or soft deleting them. -->
     <VerticalStackLayout Padding="20" Spacing="12">
 
-        <Label Text="Products" FontSize="22" FontAttributes="Bold" />
+        <Label Text="Producten" FontSize="22" FontAttributes="Bold" />
 
         <HorizontalStackLayout Spacing="8">
-            <Entry x:Name="NameEntry" Placeholder="Name" HorizontalOptions="FillAndExpand" />
-            <Entry x:Name="PriceEntry" Placeholder="Price" Keyboard="Numeric" WidthRequest="120" />
-            <Button Text="Add" Clicked="OnAddClicked" />
+            <Entry x:Name="NameEntry" Placeholder="Naam" HorizontalOptions="FillAndExpand" />
+            <Entry x:Name="PriceEntry" Placeholder="Prijs" Keyboard="Numeric" WidthRequest="120" />
+            <Button Text="Voeg toe" Clicked="OnAddClicked" />
         </HorizontalStackLayout>
 
         <CollectionView x:Name="ProductsCollection" ItemsSource="{Binding Products}" SelectionMode="None">
@@ -22,7 +23,7 @@
                         <HorizontalStackLayout Spacing="12">
                             <Label Text="{Binding Name}" FontSize="16" />
                             <Label Text="{Binding Price, StringFormat='{0:F2} EUR'}" FontSize="14" VerticalOptions="Center" />
-                            <Button Text="Delete" Clicked="OnDeleteClicked" CommandParameter="{Binding Id}" HorizontalOptions="End" />
+                            <Button Text="Verwijder" Clicked="OnDeleteClicked" CommandParameter="{Binding Id}" HorizontalOptions="End" />
                         </HorizontalStackLayout>
                     </Frame>
                 </DataTemplate>

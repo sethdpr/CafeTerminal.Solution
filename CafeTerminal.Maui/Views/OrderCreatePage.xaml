@@ -5,6 +5,7 @@
     x:Class="CafeTerminal.Maui.Views.OrderCreatePage"
     Title="Nieuwe bestelling">
 
+    <!-- This page lets the user select products and quantities for one new order. -->
     <VerticalStackLayout Padding="12" Spacing="8">
         <Label Text="Selecteer producten" FontSize="18" />
 

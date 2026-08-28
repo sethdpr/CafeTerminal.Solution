@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CafeTerminal.Api.Services;
 
+// This service contains the business logic for orders and payments.
 public class OrderService : IOrderService
 {
     private readonly CafeTerminalDbContext _db;
@@ -13,6 +14,7 @@ public class OrderService : IOrderService
         _db = db;
     }
 
+    // Creates the order tables if they do not exist yet.
     public async Task InitializeAsync()
     {
         try
@@ -53,6 +55,7 @@ END";
         }
     }
 
+    // Creates a new order from the selected products and quantities.
     public async Task<OrderDto> CreateAsync(CreateOrderRequest request)
     {
         var order = new Order
@@ -99,6 +102,7 @@ END";
         };
     }
 
+    // Returns the active unpaid orders for one table.
     public async Task<List<OrderDto>> GetOrdersForTableAsync(int tableNumber)
     {
         var orders = await _db.Orders
@@ -124,6 +128,7 @@ END";
         }).ToList();
     }
 
+    // Builds a payment overview for one table.
     public async Task<PaymentSummaryDto> GetPaymentSummaryAsync(int tableNumber)
     {
         var table = await _db.Tables.FirstOrDefaultAsync(t => t.Number == tableNumber);
@@ -139,6 +144,7 @@ END";
         };
     }
 
+    // Completes the payment by timestamping all unpaid orders and freeing the table.
     public async Task<bool> CompletePaymentAsync(int tableNumber)
     {
         var orders = await _db.Orders

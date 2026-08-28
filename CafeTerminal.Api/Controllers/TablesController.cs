@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CafeTerminal.Api.Controllers;
 
+// This controller manages the tables that are shown in the MAUI app.
 [ApiController]
 [Route("api/[controller]")]
 public class TablesController : ControllerBase
@@ -16,6 +17,7 @@ public class TablesController : ControllerBase
     }
 
     [HttpGet]
+    // Returns all tables with their number and current assigned name.
     public async Task<IActionResult> GetAll()
     {
         var list = await _tableService.GetAllAsync();
@@ -23,6 +25,7 @@ public class TablesController : ControllerBase
     }
 
     [HttpPut("{number}")]
+    // Assigns or updates the name of one table.
     public async Task<IActionResult> SetName(int number, [FromBody] TableDto payload)
     {
         if (payload == null)

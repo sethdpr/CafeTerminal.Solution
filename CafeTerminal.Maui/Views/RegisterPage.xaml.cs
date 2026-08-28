@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CafeTerminal.Maui.Views;
 
+// This page handles the registration flow for new users.
 public partial class RegisterPage : ContentPage
 {
     public RegisterPage()
@@ -12,6 +13,8 @@ public partial class RegisterPage : ContentPage
         InitializeComponent();
     }
 
+    // Validates the entered data, calls the registration API,
+    // stores the returned JWT, and redirects to the logged-in shell.
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
         try
@@ -128,6 +131,7 @@ public partial class RegisterPage : ContentPage
         }
     }
 
+    // Converts the raw Identity error response into readable text for the UI.
     private static string ExtractRegisterErrorMessage(string error)
     {
         try
@@ -149,6 +153,7 @@ public partial class RegisterPage : ContentPage
         return error;
     }
 
+    // Helper type used to deserialize Identity errors returned by the API.
     private class IdentityErrorResponse
     {
         public string Description { get; set; } = string.Empty;

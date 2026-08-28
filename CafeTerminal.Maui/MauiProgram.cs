@@ -1,10 +1,9 @@
 ﻿using CafeTerminal.Maui.Views;
-
-using CafeTerminal.Maui.Views;
 using CafeTerminal.Maui.Services;
 
 namespace CafeTerminal.Maui;
 
+// This class configures dependency injection, fonts, and services for the MAUI app.
 public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
@@ -31,11 +30,11 @@ public static class MauiProgram
             BaseAddress = new Uri(apiBase)
         });
 
-        // Services
+        // Shared services used by multiple pages.
         builder.Services.AddSingleton<ApiService>();
         builder.Services.AddSingleton<AuthService>();
 
-        // Pages
+        // Pages registered for navigation and dependency resolution.
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<RegisterPage>();
         builder.Services.AddSingleton<TablesPage>();

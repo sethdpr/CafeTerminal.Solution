@@ -6,8 +6,9 @@ using System.Text;
 
 namespace CafeTerminal.Api.Services
 {
-    public class JwtService /*This service gets sent the user's email and password and returns a JWT token if the credentials are valid.
-                             We store this in a separate service to keep the AuthController clean*/
+    // This service creates JWT tokens for authenticated users.
+    // It keeps token creation logic out of the controller.
+    public class JwtService
     {
         private readonly IConfiguration _configuration;
 
@@ -16,6 +17,7 @@ namespace CafeTerminal.Api.Services
             _configuration = configuration;
         }
 
+        // Builds and signs a JWT token based on the configured key, issuer, and audience.
         public string GenerateToken(ApplicationUser user)
         {
             var jwtKey = _configuration["Jwt:Key"];

@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace CafeTerminal.Shared.DTOs
 {
-    public class RegisterRequest //this request gets sent to the API when a user wants to register
+    // This DTO is sent to the API when a user registers.
+    public class RegisterRequest
     {
         [Required]
+        // Username chosen by the user.
         public string Username { get; set; }
         [Required]
         [EmailAddress]
+        // Email address entered during registration.
         public string Email { get; set; }
         [Required]
+        // Password chosen by the user.
         public string Password { get; set; }
     }
 }
