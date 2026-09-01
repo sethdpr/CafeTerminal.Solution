@@ -51,17 +51,20 @@ public partial class TablesPage : ContentPage
     {
         if (sender is VisualElement ve && ve.BindingContext is TableItem ti)
         {
+            // Compare the current tap with the previous one for this table.
             var now = DateTime.UtcNow;
             if (_lastTapTimes.TryGetValue(ti.Number, out var last) && (now - last).TotalMilliseconds <= 500)
             {
                 // Double-click detected
                 _lastTapTimes.Remove(ti.Number);
 
+                // Do not open another modal dialog while one is already active.
                 if (_isTableDialogOpen || Navigation.ModalStack.LastOrDefault() is NavigationPage)
                 {
                     return;
                 }
 
+                // Open the selected table in a modal navigation container.
                 _isTableDialogOpen = true;
                 var dialog = new NavigationPage(new TableDialogPage(ti));
                 await Navigation.PushModalAsync(dialog);
@@ -78,12 +81,14 @@ public partial class TablesPage : ContentPage
     {
         base.OnAppearing();
 
+        // Allow the table dialog to be opened again after returning to this page.
         _isTableDialogOpen = false;
 
         if (_apiService != null)
         {
             try
             {
+                // Reload the table state from the backend.
                 var tables = await _apiService.GetTablesAsync();
                 // Update TableItems collection
                 TableItems.Clear();
@@ -113,6 +118,7 @@ public partial class TablesPage : ContentPage
             {
                 if (_name != value)
                 {
+                    // Store the new value and refresh both bound display properties.
                     _name = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayText)));

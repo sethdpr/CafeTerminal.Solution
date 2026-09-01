@@ -5,28 +5,122 @@
     x:Class="CafeTerminal.Maui.Views.OrderCreatePage"
     Title="Nieuwe bestelling">
 
-    <!-- This page lets the user select products and quantities for one new order. -->
-    <VerticalStackLayout Padding="12" Spacing="8">
-        <Label Text="Selecteer producten" FontSize="18" />
+    <Grid
+        Padding="12"
+        RowSpacing="8"
+        RowDefinitions="Auto,*,Auto">
 
-        <CollectionView x:Name="ProductsList" SelectionMode="None">
+        <Label
+            Grid.Row="0"
+            Text="Selecteer producten"
+            FontSize="18"
+            Margin="0,0,0,4" />
+
+        <CollectionView
+            Grid.Row="1"
+            x:Name="ProductsList"
+            SelectionMode="None">
+
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout
+                    Orientation="Vertical"
+                    Span="2"
+                    VerticalItemSpacing="8"
+                    HorizontalItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Padding="8" Margin="4" HasShadow="False" BorderColor="LightGray">
-                        <HorizontalStackLayout Spacing="8">
-                            <Label Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start" WidthRequest="120" />
-                            <Label Text="{Binding Price, StringFormat='{0:F2} EUR'}" VerticalOptions="Center" WidthRequest="80" />
-                            <Stepper Minimum="0" Maximum="20" Increment="1" Value="{Binding Quantity, Mode=TwoWay}" VerticalOptions="Center" />
-                            <Label Text="{Binding Quantity}" WidthRequest="40" HorizontalTextAlignment="Center" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
+
+                    <Frame
+                        Padding="10"
+                        HasShadow="False"
+                        BorderColor="LightGray"
+                        CornerRadius="8">
+
+                        <VerticalStackLayout
+                            Spacing="6">
+
+                            <!-- Product name -->
+                            <Label
+                                Text="{Binding Name}"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                HorizontalTextAlignment="Center"
+                                LineBreakMode="WordWrap"
+                                MaxLines="2" />
+
+                            <!-- Product price -->
+                            <Label
+                                Text="{Binding Price, StringFormat='{0:F2} EUR'}"
+                                FontSize="14"
+                                TextColor="Gray"
+                                HorizontalTextAlignment="Center" />
+
+                            <!-- Quantity controls -->
+                            <Grid
+                                HorizontalOptions="Center"
+                                ColumnSpacing="8"
+                                ColumnDefinitions="45,40,45">
+
+                                <!-- Minus -->
+                                <Button
+                                    Grid.Column="0"
+                                    Text="-"
+                                    FontSize="20"
+                                    Padding="0"
+                                    WidthRequest="45"
+                                    HeightRequest="45"
+                                    Clicked="OnDecreaseQuantityClicked" />
+
+                                <!-- Quantity -->
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Quantity}"
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalTextAlignment="Center" />
+
+                                <!-- Plus -->
+                                <Button
+                                    Grid.Column="2"
+                                    Text="+"
+                                    FontSize="20"
+                                    Padding="0"
+                                    WidthRequest="45"
+                                    HeightRequest="45"
+                                    Clicked="OnIncreaseQuantityClicked" />
+
+                            </Grid>
+
+                        </VerticalStackLayout>
+
                     </Frame>
+
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
         </CollectionView>
 
-        <HorizontalStackLayout Spacing="8">
-            <Button Text="Bestelling opslaan" Clicked="OnSaveOrderClicked" />
-            <Button Text="Annuleer" Clicked="OnCancelClicked" />
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+        <!-- Action buttons -->
+        <Grid
+            Grid.Row="2"
+            ColumnSpacing="8"
+            ColumnDefinitions="*,*">
+
+            <Button
+                Grid.Column="0"
+                Text="Bestelling opslaan"
+                Clicked="OnSaveOrderClicked" />
+
+            <Button
+                Grid.Column="1"
+                Text="Annuleer"
+                Clicked="OnCancelClicked" />
+
+        </Grid>
+
+    </Grid>
+
 </ContentPage>

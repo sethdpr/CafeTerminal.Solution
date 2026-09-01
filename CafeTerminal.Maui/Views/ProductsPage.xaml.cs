@@ -39,6 +39,7 @@ public partial class ProductsPage : ContentPage
     {
         try
         {
+            // Fetch the active products and refresh the bound collection.
             var list = await _apiService.GetProductsAsync();
             Products.Clear();
             foreach (var p in list)
@@ -46,6 +47,7 @@ public partial class ProductsPage : ContentPage
         }
         catch (Exception ex)
         {
+            // Show API or connectivity failures in a simple alert.
             await DisplayAlert("Fout", $"Kon producten niet laden: {ex.Message}", "OK");
         }
     }
@@ -53,6 +55,7 @@ public partial class ProductsPage : ContentPage
     // Validates the entered values and creates a new product through the API.
     private async void OnAddClicked(object sender, EventArgs e)
     {
+        // Read and normalize the entered product name.
         var name = NameEntry.Text?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -60,6 +63,7 @@ public partial class ProductsPage : ContentPage
             return;
         }
 
+        // Validate the price field before sending it to the API.
         if (!decimal.TryParse(PriceEntry.Text, out var price))
         {
             await DisplayAlert("Fout", "Geef een geldige prijs op.", "OK");
@@ -74,9 +78,11 @@ public partial class ProductsPage : ContentPage
 
         try
         {
+            // Create the product on the backend.
             var created = await _apiService.CreateProductAsync(name, price);
             if (created != null)
             {
+                // Add the created product locally and clear the input fields.
                 Products.Add(created);
                 NameEntry.Text = string.Empty;
                 PriceEntry.Text = string.Empty;
@@ -88,6 +94,7 @@ public partial class ProductsPage : ContentPage
         }
         catch (Exception ex)
         {
+            // Show creation failures from the API or network layer.
             await DisplayAlert("Fout", $"Fout bij aanmaken product: {ex.Message}", "OK");
         }
     }
@@ -97,14 +104,17 @@ public partial class ProductsPage : ContentPage
     {
         if (sender is Button btn && btn.CommandParameter is int id)
         {
+            // Ask the user to confirm the delete action first.
             var confirm = await DisplayAlert("Bevestig", "Weet je zeker dat je dit product wilt verwijderen?", "Ja", "Nee");
             if (!confirm) return;
 
             try
             {
+                // Delete the product through the API.
                 var success = await _apiService.DeleteProductAsync(id);
                 if (success)
                 {
+                    // Remove the deleted product from the local collection.
                     var existing = Products.FirstOrDefault(p => p.Id == id);
                     if (existing != null) Products.Remove(existing);
                 }
@@ -115,6 +125,7 @@ public partial class ProductsPage : ContentPage
             }
             catch (Exception ex)
             {
+                // Show delete failures from the API or network layer.
                 await DisplayAlert("Fout", $"Fout bij verwijderen: {ex.Message}", "OK");
             }
         }

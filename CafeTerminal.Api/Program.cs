@@ -40,9 +40,11 @@ builder.Services.AddSwaggerGen(options =>
     });
 }); //Swagger for API testing
 
+// Register the SQL Server EF Core context used by Identity and the app data.
 builder.Services.AddDbContext<CafeTerminalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); //Gets the connection string from appsettings.json
 
+// Register ASP.NET Core Identity for user registration and login.
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<CafeTerminalDbContext>()
     .AddDefaultTokenProviders(); //Identity setup for user management
@@ -75,16 +77,21 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Enable authorization policies that build on the JWT authentication setup.
 builder.Services.AddAuthorization();
 
+// Register custom application services used by controllers and startup initialization.
 builder.Services.AddScoped<JwtService>(); //If a controller needs to generate a JWT token, it can use this service
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+// Build the configured ASP.NET Core app.
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    // Resolve the database context inside a startup scope.
     var db = scope.ServiceProvider.GetRequiredService<CafeTerminalDbContext>();
     try
     {
@@ -97,6 +104,7 @@ using (var scope = app.Services.CreateScope())
         db.Database.EnsureCreated();
     }
 
+    // Run manual initialization steps that keep older databases compatible.
     // Also call InitializeAsync on services to ensure any legacy databases get required tables/columns
     var tableService = scope.ServiceProvider.GetRequiredService<ITableService>();
     tableService.InitializeAsync().GetAwaiter().GetResult();
@@ -106,6 +114,7 @@ using (var scope = app.Services.CreateScope())
     orderService.InitializeAsync().GetAwaiter().GetResult();
 }
 
+// Enable Swagger UI only during development.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -116,14 +125,17 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Redirect HTTP traffic to HTTPS outside development.
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
 
+// Enable authentication before authorization so JWT identities are available.
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map controller routes and start the web host.
 app.MapControllers();
 
 app.Run();

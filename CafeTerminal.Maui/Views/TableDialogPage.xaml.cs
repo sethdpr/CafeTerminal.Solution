@@ -18,15 +18,18 @@ public partial class TableDialogPage : ContentPage
     {
         InitializeComponent();
 
+        // Keep the selected table available for later save and navigation actions.
         _table = table;
         // Resolve ApiService from MAUI DI
         var services = Application.Current?.Handler?.MauiContext?.Services;
         _apiService = services?.GetService<ApiService>() ?? new ApiService(ApiService.CreateFallbackHttpClient());
 
+        // Show the selected table number in the dialog header.
         TitleLabel.Text = $"Tafel {_table.Number}";
 
         if (!string.IsNullOrWhiteSpace(_table.Name))
         {
+            // Existing table names switch the dialog into manage-order mode.
             NameEntry.Text = _table.Name;
             NameEntry.IsVisible = false;
             SaveButton.IsVisible = false;
@@ -38,12 +41,15 @@ public partial class TableDialogPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        // Reset the navigation guard whenever this page becomes active again.
         _isOrderPageOpen = false;
     }
 
     // Saves the entered table name through the API.
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        // Read and validate the entered table name.
         var name = NameEntry.Text?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -59,9 +65,11 @@ public partial class TableDialogPage : ContentPage
                 return;
             }
 
+            // Persist the table name through the API.
             var success = await _apiService.SetTableNameAsync(_table.Number, name);
             if (success)
             {
+                // Update the local table object so the overview reflects the new name.
                 _table.Name = name;
                 await DisplayAlert("Succes", "Tafelnaam opgeslagen", "OK");
                 await Navigation.PopModalAsync();
@@ -73,6 +81,7 @@ public partial class TableDialogPage : ContentPage
         }
         catch (Exception ex)
         {
+            // Show connectivity or backend failures to the user.
             await DisplayAlert("Fout", $"Er kon geen verbinding worden gemaakt met de API: {ex.Message}", "OK");
         }
     }
@@ -80,6 +89,7 @@ public partial class TableDialogPage : ContentPage
     // Opens the order creation page for this table.
     private async void OnAddOrderClicked(object sender, EventArgs e)
     {
+        // Prevent stacking multiple order screens on top of each other.
         if (_isOrderPageOpen || Navigation.NavigationStack.LastOrDefault() is OrderCreatePage)
         {
             return;
@@ -98,6 +108,7 @@ public partial class TableDialogPage : ContentPage
     // Opens the payment overview page for this table.
     private async void OnPaymentClicked(object sender, EventArgs e)
     {
+        // Open the payment overview for the selected table.
         var paymentPage = new PaymentPage(_table.Number);
         await Navigation.PushAsync(paymentPage);
     }

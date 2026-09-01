@@ -17,9 +17,11 @@ public partial class LoginPage : ContentPage
     // and redirects the user to the logged-in shell.
     private async void OnLoginClicked(object sender, EventArgs e)
     {
+        // Read the entered credentials from the form.
         var username = UsernameEntry.Text;
         var password = PasswordEntry.Text;
 
+        // Stop early when the user left required fields empty.
         if (string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(password))
         {
@@ -31,6 +33,7 @@ public partial class LoginPage : ContentPage
             return; //Check if username and password are not empty. If they are, show an alert and return early
         }
 
+        // Build the shared login request that matches the API contract.
         var request = new LoginRequest
         {
             Username = username,
@@ -46,6 +49,7 @@ public partial class LoginPage : ContentPage
 
         try
         {
+            // Try to reuse the app-wide HttpClient; create a fallback client when needed.
             var services = Application.Current?.Handler?.MauiContext?.Services;
             var client = services?.GetService<HttpClient>();
             var disposeClient = false;
@@ -65,12 +69,14 @@ public partial class LoginPage : ContentPage
 
             try
             {
+                // Send the login request to the API.
                 var response = await client.PostAsync(
                     "/api/Auth/login",
                     content); //Send a POST request to the API's login endpoint with the JSON content
 
                 if (response.IsSuccessStatusCode)
                 {
+                    // Read and deserialize the API response.
                     //read the response from the API
                     var responseJson = await response.Content.ReadAsStringAsync();
 
@@ -93,11 +99,13 @@ public partial class LoginPage : ContentPage
                         return;
                     }
 
+                    // Persist the JWT so later API calls can authenticate automatically.
                     //store the JWT token securely on the device
                     await SecureStorage.Default.SetAsync(
                         "auth_token",
                         authResponse.Token);
 
+                    // Switch the shell to the logged-in navigation structure.
                     // Rebuild the shell items for the logged-in state before navigating
                     if (Shell.Current is AppShell appShell)
                     {
@@ -110,6 +118,7 @@ public partial class LoginPage : ContentPage
                 }
                 else
                 {
+                    // Show a generic login failure message for invalid credentials.
                     await DisplayAlert(
                         "Login mislukt",
                         "Ongeldige gebruikersnaam of wachtwoord.",
@@ -118,6 +127,7 @@ public partial class LoginPage : ContentPage
             }
             finally
             {
+                // Dispose the fallback client created in this method only.
                 if (disposeClient)
                 {
                     client.Dispose();
@@ -126,6 +136,7 @@ public partial class LoginPage : ContentPage
         }
         catch (Exception ex)
         {
+            // Surface connectivity or server errors to the user.
             await DisplayAlert(
                 "Fout",
                 $"Er kon geen verbinding worden gemaakt met de API: {ex.Message}",
@@ -136,6 +147,7 @@ public partial class LoginPage : ContentPage
     // Navigates from the login page to the registration page.
     private async void OnRegisterHereClicked(object sender, EventArgs e)
     {
+        // Jump directly to the register shell route.
         await Shell.Current.GoToAsync("///register"); //This line recognises the route defined in AppShell.xaml
 
         /*We use "///" to navigate between Shell-elements.

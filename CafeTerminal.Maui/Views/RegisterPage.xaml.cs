@@ -20,11 +20,13 @@ public partial class RegisterPage : ContentPage
     {
         try
         {
+            // Read the registration fields from the form.
             //read fields from UI
             var email = EmailEntry.Text;
             var username = UsernameEntry.Text;
             var password = PasswordEntry.Text;
 
+            // Stop when required input is missing.
             //front-end troubleshoot
             if (string.IsNullOrWhiteSpace(email) ||
                 string.IsNullOrWhiteSpace(username) ||
@@ -34,12 +36,14 @@ public partial class RegisterPage : ContentPage
                 return;
             }
 
+            // Validate the e-mail format before sending the request.
             if (!new EmailAddressAttribute().IsValid(email))
             {
                 await DisplayAlert("Fout", "Vul een geldig e-mailadres in.", "OK");
                 return;
             }
 
+            // Build the shared registration payload.
             //create request object
             var request = new RegisterRequest
             {
@@ -75,12 +79,14 @@ public partial class RegisterPage : ContentPage
 
             try
             {
+                // Send the registration request to the API.
                 var response = await client.PostAsync(
                     "/api/Auth/register",
                     content);
 
                 if (response.IsSuccessStatusCode)
                 {
+                    // Read and deserialize the success response.
                     //read the response from the API
                     var responseJson = await response.Content.ReadAsStringAsync();
 
@@ -103,16 +109,19 @@ public partial class RegisterPage : ContentPage
                         return;
                     }
 
+                    // Store the JWT so the user is immediately signed in.
                     //store the JWT token securely on the device
                     await SecureStorage.Default.SetAsync(
                         "auth_token",
                         authResponse.Token);
 
+                    // Confirm the registration result to the user.
                     await DisplayAlert(
                         "Succes",
                         "Gebruiker succesvol geregistreerd",
                         "OK");
 
+                    // Switch the shell to the authenticated routes.
                     // Rebuild the shell items for the logged-in state before navigating
                     if (Shell.Current is AppShell appShell)
                     {
@@ -131,6 +140,7 @@ public partial class RegisterPage : ContentPage
                 }
                 else
                 {
+                    // Extract a readable validation message from the API response.
                     var error = await response.Content.ReadAsStringAsync();
                     var errorMessage = ExtractRegisterErrorMessage(error);
                     await DisplayAlert(
@@ -141,6 +151,7 @@ public partial class RegisterPage : ContentPage
             }
             finally
             {
+                // Dispose the local fallback client only when this method created it.
                 if (disposeClient)
                 {
                     client.Dispose();
@@ -149,6 +160,7 @@ public partial class RegisterPage : ContentPage
         }
         catch (Exception ex)
         {
+            // Show unexpected registration errors to the user.
             await DisplayAlert(
                 "Fout",
                 $"Registratie mislukt: {ex.Message}",
@@ -161,6 +173,7 @@ public partial class RegisterPage : ContentPage
     {
         try
         {
+            // Try to parse the standard Identity error array returned by ASP.NET Core.
             var identityErrors = JsonSerializer.Deserialize<List<IdentityErrorResponse>>(error, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -168,6 +181,7 @@ public partial class RegisterPage : ContentPage
 
             if (identityErrors != null && identityErrors.Count > 0)
             {
+                // Merge all server-side validation messages into one alert string.
                 return string.Join(Environment.NewLine, identityErrors.Select(e => e.Description));
             }
         }
@@ -175,6 +189,7 @@ public partial class RegisterPage : ContentPage
         {
         }
 
+        // Fall back to the raw server response when parsing is not possible.
         return error;
     }
 

@@ -5,6 +5,7 @@ using Android.OS;
 namespace CafeTerminal.Maui
 {
     [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
+    // Android entry activity that hosts the MAUI application window.
     public class MainActivity : MauiAppCompatActivity
     {
     }
